@@ -1,0 +1,8 @@
+{
+  "name": "nox4clip-streaming-vercel",
+  "version": "1.0.0",
+  "description": "Streaming site frontend + Vercel serverless API, backed by Upstash Redis",
+  "dependencies": {
+    "@upstash/redis": "^1.34.0"
+  }
+}

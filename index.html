@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>nox4clip — Screening Room</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="marquee">
+    <h1>The Screening Room</h1>
+    <p>A private collection, organized by tier. Pick an episode to start watching.</p>
+  </header>
+
+  <main id="rows">
+    <!-- rows are rendered here by js/app.js -->
+  </main>
+
+  <footer class="site-footer">
+    <p>nox4clip &middot; <a href="admin.html">Admin</a></p>
+  </footer>
+
+  <div class="player-overlay" id="playerOverlay">
+    <div class="player-box">
+      <video id="playerVideo" controls playsinline></video>
+      <div class="player-info">
+        <div>
+          <h3 id="playerTitle"></h3>
+          <p id="playerDescription"></p>
+        </div>
+        <button class="close-btn" id="closeBtn" aria-label="Close">&times;</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

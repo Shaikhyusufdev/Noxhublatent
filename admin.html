@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — nox4clip</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <header class="marquee">
+    <h1>Admin</h1>
+    <p>Add episodes by pasting their AceCloud video URL. They'll appear on the public site immediately.</p>
+  </header>
+
+  <main class="admin-main">
+
+    <section id="loginPanel" class="panel">
+      <label for="passwordInput">Admin password</label>
+      <input id="passwordInput" type="password" autocomplete="current-password" />
+      <button id="loginBtn">Unlock</button>
+      <p id="loginError" class="error-text"></p>
+    </section>
+
+    <section id="adminPanel" class="panel" hidden>
+
+      <form id="addForm" class="add-form">
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" name="title" required />
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="members">Members Only</option>
+            <option value="bonus">Bonus Episodes</option>
+            <option value="premium">Premium Episodes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="videoUrl">Video URL (from AceCloud)</label>
+          <input id="videoUrl" name="videoUrl" placeholder="https://...s3.../episode1.mp4" required />
+        </div>
+
+        <div class="field">
+          <label for="thumbnailUrl">Thumbnail URL (optional)</label>
+          <input id="thumbnailUrl" name="thumbnailUrl" placeholder="https://...jpg" />
+        </div>
+
+        <div class="field field-wide">
+          <label for="description">Description (optional)</label>
+          <textarea id="description" name="description" rows="2"></textarea>
+        </div>
+
+        <button type="submit">Add episode</button>
+      </form>
+
+      <p id="formMessage" class="form-message"></p>
+
+      <h2 class="list-heading">Existing episodes</h2>
+      <div id="episodeList" class="episode-list"></div>
+
+    </section>
+
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

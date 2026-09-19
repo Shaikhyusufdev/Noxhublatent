@@ -1,0 +1,142 @@
+.admin-main {
+  padding: 30px 6vw 60px;
+  max-width: 720px;
+}
+
+.panel label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.panel input,
+.panel select,
+.panel textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.92rem;
+}
+
+.panel input:focus,
+.panel select:focus,
+.panel textarea:focus {
+  outline: none;
+  border-color: var(--muted);
+}
+
+#loginPanel {
+  max-width: 320px;
+}
+
+#loginPanel button,
+.add-form button {
+  margin-top: 14px;
+  background: var(--gold);
+  color: #0d0d12;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#loginPanel button:hover,
+.add-form button:hover {
+  filter: brightness(1.08);
+}
+
+.error-text {
+  color: #e8735a;
+  font-size: 0.85rem;
+  min-height: 1.2em;
+  margin-top: 10px;
+}
+
+.add-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.add-form > button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.form-message {
+  min-height: 1.2em;
+  font-size: 0.85rem;
+  color: var(--teal);
+  margin-top: 12px;
+}
+
+.form-message.error {
+  color: #e8735a;
+}
+
+.list-heading {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  margin: 34px 0 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+
+.episode-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.episode-row .info h4 {
+  margin: 0 0 3px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.episode-row .info span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.episode-row .del-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.episode-row .del-btn:hover {
+  border-color: #e8735a;
+  color: #e8735a;
+}
+
+@media (max-width: 560px) {
+  .add-form {
+    grid-template-columns: 1fr;
+  }
+}
