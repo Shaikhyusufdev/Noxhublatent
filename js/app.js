@@ -80,12 +80,24 @@ function renderCard(item) {
   return card;
 }
 
-function openPlayer(item) {
-  videoEl.src = item.videoUrl;
+async function openPlayer(item) {
   titleEl.textContent = item.title;
-  descEl.textContent = item.description || '';
+  descEl.textContent = 'Loading...';
   overlay.classList.add('open');
-  videoEl.play().catch(() => {});
+  videoEl.removeAttribute('src');
+  videoEl.load();
+
+  try {
+    const res = await fetch(`/api/stream/${item.id}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not load video');
+
+    videoEl.src = data.url;
+    descEl.textContent = item.description || '';
+    videoEl.play().catch(() => {});
+  } catch (err) {
+    descEl.textContent = 'Could not load this video right now. Please try again.';
+  }
 }
 
 function closePlayer() {

@@ -11,7 +11,7 @@
 
   <header class="marquee">
     <h1>Admin</h1>
-    <p>Add episodes by pasting their AceCloud video URL. They'll appear on the public site immediately.</p>
+    <p>Add episodes with their object key (the file's path inside the AceCloud bucket, e.g. <code>Latent/episode1.mp4</code>). A fresh, temporary link is generated automatically whenever someone hits play.</p>
   </header>
 
   <main class="admin-main">
@@ -41,8 +41,8 @@
         </div>
 
         <div class="field">
-          <label for="videoUrl">Video URL (from AceCloud)</label>
-          <input id="videoUrl" name="videoUrl" placeholder="https://...s3.../episode1.mp4" required />
+          <label for="videoKey">Object key (path inside the bucket)</label>
+          <input id="videoKey" name="videoKey" placeholder="Latent/episode1.mp4" required />
         </div>
 
         <div class="field">

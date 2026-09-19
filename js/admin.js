@@ -64,7 +64,7 @@ addForm.addEventListener('submit', async (e) => {
   const payload = {
     title: document.getElementById('title').value.trim(),
     category: document.getElementById('category').value,
-    videoUrl: document.getElementById('videoUrl').value.trim(),
+    videoKey: document.getElementById('videoKey').value.trim(),
     thumbnailUrl: document.getElementById('thumbnailUrl').value.trim(),
     description: document.getElementById('description').value.trim(),
   };

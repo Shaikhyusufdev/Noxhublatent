@@ -10,9 +10,9 @@ module.exports = async (req, res) => {
   }
 
   if (req.method === 'POST') {
-    const { title, description, category, videoUrl, thumbnailUrl } = req.body || {};
-    if (!title || !category || !videoUrl) {
-      return res.status(400).json({ error: 'title, category and videoUrl are required' });
+    const { title, description, category, videoKey, thumbnailUrl } = req.body || {};
+    if (!title || !category || !videoKey) {
+      return res.status(400).json({ error: 'title, category and videoKey are required' });
     }
     const videos = await getVideos();
     const newVideo = {
@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
       title,
       description: description || '',
       category,
-      videoUrl,
+      videoKey,
       thumbnailUrl: thumbnailUrl || '',
       createdAt: new Date().toISOString(),
     };
