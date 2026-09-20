@@ -13,6 +13,7 @@ const DOWNLOAD_REDIRECT_URL = 'https://apknox.online/FORHUB/?i=1';
 
 const FIRST_WATCH_SECONDS = 5 * 60; // 5 minutes
 const COUNTDOWN_SECONDS = 5;
+const SKIP_SECONDS = 5; // max jump per click; free seeking is disabled
 
 const rowsEl = document.getElementById('rows');
 
@@ -21,6 +22,17 @@ const videoEl = document.getElementById('playerVideo');
 const titleEl = document.getElementById('playerTitle');
 const descEl = document.getElementById('playerDescription');
 const closeBtn = document.getElementById('closeBtn');
+
+const stageEl = document.getElementById('playerStage');
+const spinnerEl = document.getElementById('bufferSpinner');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const back5Btn = document.getElementById('back5Btn');
+const fwd5Btn = document.getElementById('fwd5Btn');
+const muteBtn = document.getElementById('muteBtn');
+const fsBtn = document.getElementById('fsBtn');
+const timeLabel = document.getElementById('timeLabel');
+const progressPlayed = document.getElementById('progressPlayed');
+const progressBuffered = document.getElementById('progressBuffered');
 
 const choiceOverlay = document.getElementById('choiceOverlay');
 const choiceTitle = document.getElementById('choiceTitle');
@@ -213,6 +225,8 @@ async function openPlayer(item) {
   overlay.classList.add('open');
   videoEl.removeAttribute('src');
   videoEl.load();
+  resetPlayerUi();
+  showSpinner(true);
 
   try {
     const res = await fetch(`/api/stream/${item.id}`);
@@ -224,11 +238,13 @@ async function openPlayer(item) {
     videoEl.play().catch(() => {});
     attachFirstWatchTracker();
   } catch (err) {
+    showSpinner(false);
     descEl.textContent = 'Could not load this video right now. Please try again.';
   }
 }
 
 function closePlayer() {
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   overlay.classList.remove('open');
   videoEl.pause();
   videoEl.removeAttribute('src');
@@ -255,6 +271,7 @@ function attachFirstWatchTracker() {
     if (videoEl.currentTime >= FIRST_WATCH_SECONDS) {
       videoEl.removeEventListener('timeupdate', onTimeUpdate);
       videoEl.pause();
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
       localStorage.setItem('nox_supportShown', '1');
       supportOverlay.classList.add('open');
     }
@@ -300,3 +317,184 @@ document.addEventListener('click', (e) => {
 videoEl.setAttribute('controlsList', 'nodownload noremoteplayback');
 videoEl.setAttribute('disablePictureInPicture', '');
 videoEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+/* =====================================================================
+   Custom player: 5s skip buttons, no free seeking, buffering spinner
+   ===================================================================== */
+
+let lastGoodTime = 0; // last position reached by normal playback / allowed skips
+let skipping = false; // true while one of OUR skip buttons is seeking
+let idleTimer = null;
+
+function fmtTime(t) {
+  if (!isFinite(t) || t < 0) t = 0;
+  const h = Math.floor(t / 3600);
+  const m = Math.floor((t % 3600) / 60);
+  const sec = Math.floor(t % 60);
+  const ss = String(sec).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
+}
+
+function showSpinner(on) {
+  spinnerEl.classList.toggle('show', on);
+}
+
+function resetPlayerUi() {
+  lastGoodTime = 0;
+  skipping = false;
+  progressPlayed.style.width = '0%';
+  progressBuffered.style.width = '0%';
+  timeLabel.textContent = '0:00 / 0:00';
+  stageEl.classList.remove('playing', 'idle');
+}
+
+function updateProgress() {
+  const dur = videoEl.duration;
+  if (!isFinite(dur) || dur <= 0) return;
+  progressPlayed.style.width = `${(videoEl.currentTime / dur) * 100}%`;
+  timeLabel.textContent = `${fmtTime(videoEl.currentTime)} / ${fmtTime(dur)}`;
+}
+
+function updateBuffered() {
+  const dur = videoEl.duration;
+  if (!isFinite(dur) || dur <= 0) return;
+  const t = videoEl.currentTime;
+  const b = videoEl.buffered;
+  let end = 0;
+  for (let i = 0; i < b.length; i++) {
+    if (b.start(i) <= t + 0.25 && b.end(i) >= t) {
+      end = b.end(i);
+      break;
+    }
+  }
+  progressBuffered.style.width = `${(end / dur) * 100}%`;
+}
+
+function togglePlay() {
+  if (videoEl.paused || videoEl.ended) {
+    videoEl.play().catch(() => {});
+  } else {
+    videoEl.pause();
+  }
+}
+
+function skipBy(delta) {
+  if (!videoEl.src) return;
+  const dur = videoEl.duration || 0;
+  const target = Math.max(0, Math.min(dur ? dur - 0.1 : Infinity, videoEl.currentTime + delta));
+  if (Math.abs(target - videoEl.currentTime) < 0.05) return;
+  skipping = true;
+  lastGoodTime = target;
+  videoEl.currentTime = target;
+  updateProgress();
+}
+
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else if (stageEl.requestFullscreen) {
+    stageEl.requestFullscreen().catch(() => {});
+  } else if (videoEl.webkitEnterFullscreen) {
+    videoEl.webkitEnterFullscreen(); // iPhone Safari (native controls; seek guard below still applies)
+  }
+}
+
+function wakeControls() {
+  stageEl.classList.remove('idle');
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => stageEl.classList.add('idle'), 2800);
+}
+
+playPauseBtn.addEventListener('click', togglePlay);
+back5Btn.addEventListener('click', () => skipBy(-SKIP_SECONDS));
+fwd5Btn.addEventListener('click', () => skipBy(SKIP_SECONDS));
+fsBtn.addEventListener('click', toggleFullscreen);
+muteBtn.addEventListener('click', () => {
+  videoEl.muted = !videoEl.muted;
+});
+
+videoEl.addEventListener('click', () => {
+  togglePlay();
+  wakeControls();
+});
+videoEl.addEventListener('dblclick', toggleFullscreen);
+stageEl.addEventListener('mousemove', wakeControls);
+stageEl.addEventListener('touchstart', wakeControls, { passive: true });
+
+videoEl.addEventListener('play', () => stageEl.classList.add('playing'));
+videoEl.addEventListener('pause', () => {
+  stageEl.classList.remove('playing');
+  stageEl.classList.remove('idle');
+});
+videoEl.addEventListener('ended', () => {
+  stageEl.classList.remove('playing', 'idle');
+  lastGoodTime = 0; // so replay (auto-seek to 0) isn't blocked by the seek guard
+});
+videoEl.addEventListener('volumechange', () => {
+  stageEl.classList.toggle('is-muted', videoEl.muted || videoEl.volume === 0);
+});
+
+videoEl.addEventListener('loadedmetadata', updateProgress);
+videoEl.addEventListener('timeupdate', () => {
+  if (!videoEl.seeking) lastGoodTime = videoEl.currentTime;
+  updateProgress();
+  updateBuffered();
+});
+videoEl.addEventListener('progress', updateBuffered);
+
+/* buffering spinner */
+['waiting', 'seeking', 'loadstart'].forEach((ev) =>
+  videoEl.addEventListener(ev, () => {
+    if (videoEl.src) showSpinner(true);
+  })
+);
+['playing', 'canplay', 'canplaythrough', 'seeked', 'error', 'emptied'].forEach((ev) =>
+  videoEl.addEventListener(ev, () => {
+    if (ev === 'seeked') skipping = false;
+    if (ev !== 'canplay' || videoEl.readyState >= 3) showSpinner(false);
+  })
+);
+
+/* safety net: any seek that did not come from our 5s buttons and jumps
+   further than 5s (native fullscreen on iPhone, media keys, etc.) is undone */
+videoEl.addEventListener('seeking', () => {
+  if (skipping) return;
+  if (Math.abs(videoEl.currentTime - lastGoodTime) > SKIP_SECONDS + 0.75) {
+    videoEl.currentTime = lastGoodTime;
+  }
+});
+
+/* keyboard: space/K play-pause, arrows = 5s, F fullscreen, M mute */
+document.addEventListener('keydown', (e) => {
+  if (!overlay.classList.contains('open')) return;
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+  switch (e.key) {
+    case ' ':
+    case 'k':
+    case 'K':
+      e.preventDefault();
+      togglePlay();
+      wakeControls();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      skipBy(SKIP_SECONDS);
+      wakeControls();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      skipBy(-SKIP_SECONDS);
+      wakeControls();
+      break;
+    case 'f':
+    case 'F':
+      toggleFullscreen();
+      break;
+    case 'm':
+    case 'M':
+      videoEl.muted = !videoEl.muted;
+      break;
+  }
+});
