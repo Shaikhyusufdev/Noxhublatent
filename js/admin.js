@@ -67,6 +67,11 @@ addForm.addEventListener('submit', async (e) => {
     videoKey: document.getElementById('videoKey').value.trim(),
     thumbnailUrl: document.getElementById('thumbnailUrl').value.trim(),
     description: document.getElementById('description').value.trim(),
+    qualities: {
+      720: document.getElementById('q720').value.trim(),
+      480: document.getElementById('q480').value.trim(),
+      360: document.getElementById('q360').value.trim(),
+    },
   };
 
   const res = await fetch('/api/admin/videos', {
@@ -103,18 +108,41 @@ async function refreshEpisodeList() {
   }
 
   episodes.forEach((ep) => {
+    const q = ep.qualities || {};
+    const have = [720, 480, 360].filter((h) => q[h]).map((h) => h + 'p');
     const row = document.createElement('div');
     row.className = 'episode-row';
     row.innerHTML = `
       <div class="info">
         <h4>${escapeHtml(ep.title)}</h4>
-        <span>${escapeHtml(ep.category)}</span>
+        <span>${escapeHtml(ep.category)} &middot; ${have.length ? 'also: ' + have.join(', ') : 'original only'}</span>
       </div>
-      <button class="del-btn" data-id="${ep.id}">Delete</button>
+      <div class="row-actions">
+        <button class="del-btn q-btn" type="button">Qualities</button>
+        <button class="del-btn" data-id="${ep.id}" type="button">Delete</button>
+      </div>
     `;
-    row.querySelector('.del-btn').addEventListener('click', () => deleteEpisode(ep.id));
+    row.querySelector('.q-btn').addEventListener('click', () => editQualities(ep));
+    row.querySelector('[data-id]').addEventListener('click', () => deleteEpisode(ep.id));
     episodeList.appendChild(row);
   });
+}
+
+// quick editor: asks for the 720 / 480 / 360 object keys (leave blank to remove)
+async function editQualities(ep) {
+  const q = ep.qualities || {};
+  const next = {};
+  for (const h of [720, 480, 360]) {
+    const v = prompt(`${h}p object key for "${ep.title}" (blank = none)`, q[h] || '');
+    if (v === null) return; // cancelled
+    next[h] = v.trim();
+  }
+  await fetch(`/api/admin/videos/${ep.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'x-admin-password': getPassword() },
+    body: JSON.stringify({ qualities: next }),
+  });
+  refreshEpisodeList();
 }
 
 async function deleteEpisode(id) {

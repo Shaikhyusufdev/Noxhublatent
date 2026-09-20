@@ -135,6 +135,24 @@
   color: #e8735a;
 }
 
+/* quality key inputs + row buttons */
+.quality-inputs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.episode-row .q-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
 @media (max-width: 560px) {
   .add-form {
     grid-template-columns: 1fr;

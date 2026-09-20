@@ -17,7 +17,16 @@ module.exports = async (req, res) => {
 
   if (req.method === 'PUT') {
     if (idx === -1) return res.status(404).json({ error: 'Episode not found' });
-    videos[idx] = { ...videos[idx], ...req.body, id: videos[idx].id };
+    const body = { ...(req.body || {}) };
+    if (body.qualities) {
+      const clean = {};
+      [720, 480, 360].forEach((h) => {
+        const v = typeof body.qualities[h] === 'string' ? body.qualities[h].trim() : '';
+        if (v) clean[h] = v;
+      });
+      body.qualities = clean;
+    }
+    videos[idx] = { ...videos[idx], ...body, id: videos[idx].id };
     await saveVideos(videos);
     return res.status(200).json(videos[idx]);
   }
