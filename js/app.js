@@ -6,7 +6,7 @@ const TIERS = [
 ];
 
 // ⚠️ Set your real Telegram channel link here
-const TELEGRAM_URL = 'https://t.me/your_channel_here';
+const TELEGRAM_URL = 'https://t.me/NOXHUB1';
 
 const FIRST_WATCH_SECONDS = 5 * 60; // 5 minutes
 const COUNTDOWN_SECONDS = 5;
