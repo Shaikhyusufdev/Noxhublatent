@@ -384,8 +384,7 @@ videoEl.addEventListener('contextmenu', (e) => e.preventDefault());
    - fullscreen + landscape (with a rotate fallback for iPhone)
    ===================================================================== */
 
-const INITIAL_AHEAD = 15;   // seconds that must be buffered before playback starts
-const REBUFFER_AHEAD = 30;  // seconds that must be buffered before resuming after a stall / low buffer
+const REBUFFER_AHEAD = 30;  // seconds that must be buffered before resuming after a real stall / low buffer
 const MIN_FILL_RATE = 1.2;  // media-seconds fetched per real second; below this the connection can't keep up
 const MAX_AHEAD = 50;       // when the connection is slow and there is no lower quality: buffer this much before playing
 const LOW_WATER = 6;        // playing with less than this many seconds buffered ahead -> pause early and refill
@@ -526,7 +525,7 @@ function updateQualityUi() {
   });
 }
 
-function loadSource(src, resumeAt) {
+function loadSource(src, resumeAt, autoplay = true) {
   currentSource = src;
   updateQualityUi();
   showSpinner(true);
@@ -543,7 +542,25 @@ function loadSource(src, resumeAt) {
     videoEl.addEventListener('loadedmetadata', onMeta);
   }
 
-  startRebuffer(INITIAL_AHEAD, true);
+  startInstantPlay(autoplay);
+}
+
+/* play as soon as the browser has enough to start (no artificial pre-buffer wait).
+   The browser keeps downloading ahead in the background on its own while it plays,
+   so "aage ka buffer" builds up naturally within a few seconds without blocking start. */
+function startInstantPlay(autoplay = true) {
+  showSpinner(true);
+  if (autoplay) stageEl.classList.add('playing');
+  const onReady = () => {
+    videoEl.removeEventListener('canplay', onReady);
+    showSpinner(false);
+    if (autoplay) videoEl.play().catch(() => stageEl.classList.remove('playing'));
+  };
+  if (videoEl.readyState >= 3) {
+    onReady();
+  } else {
+    videoEl.addEventListener('canplay', onReady);
+  }
 }
 
 function switchSource(src, message) {
@@ -552,11 +569,7 @@ function switchSource(src, message) {
   const wasPlaying = !videoEl.paused || !!rb;
   cancelRebuffer();
   if (message) toast(message);
-  loadSource(src, resumeAt);
-  if (!wasPlaying) {
-    // user was paused: keep it paused once buffered
-    if (rb) rb.resume = false;
-  }
+  loadSource(src, resumeAt, wasPlaying); // stay paused if the user had paused before switching quality
 }
 
 function canDowngrade() {
