@@ -34,6 +34,35 @@
     </div>
   </div>
 
+  <div class="choice-overlay" id="choiceOverlay">
+    <div class="choice-box">
+      <h3 id="choiceTitle"></h3>
+      <p class="choice-sub">How would you like to watch this?</p>
+      <div class="choice-buttons">
+        <button id="streamChoiceBtn" class="choice-btn stream-btn">▶ Stream</button>
+        <button id="downloadChoiceBtn" class="choice-btn download-btn">⬇ Download</button>
+      </div>
+      <button class="choice-cancel" id="choiceCancelBtn">Cancel</button>
+    </div>
+  </div>
+
+  <div class="countdown-overlay" id="countdownOverlay">
+    <div class="countdown-box">
+      <p class="countdown-label">Please wait</p>
+      <div class="countdown-number" id="countdownNumber">5</div>
+      <div class="countdown-bar"><div class="countdown-bar-fill" id="countdownBarFill"></div></div>
+    </div>
+  </div>
+
+  <div class="support-overlay" id="supportOverlay">
+    <div class="support-box">
+      <h3>Enjoying nox4clip?</h3>
+      <p>Support us and join our Telegram channel for updates and requests.</p>
+      <a id="supportJoinBtn" class="support-join-btn" href="#" target="_blank" rel="noopener">Join Telegram</a>
+      <button class="support-close-btn" id="supportCloseBtn">Maybe later</button>
+    </div>
+  </div>
+
   <script src="js/app.js"></script>
 </body>
 </html>
