@@ -335,6 +335,7 @@ videoEl.addEventListener('contextmenu', (e) => e.preventDefault());
 const INITIAL_AHEAD = 8;    // seconds that must be buffered before playback starts
 const REBUFFER_AHEAD = 12;  // seconds that must be buffered before resuming after a stall
 const MIN_FILL_RATE = 1.2;  // media-seconds fetched per real second; below this the connection can't keep up
+const MAX_AHEAD = 45;       // when the connection is slow and there is no lower quality: buffer this much before playing
 
 const qualityWrap = document.getElementById('qualityWrap');
 const qualityBtn = document.getElementById('qualityBtn');
@@ -348,6 +349,7 @@ let currentSource = null;
 let qualityCap = null;      // set when we auto-downgrade, so the next video starts low too
 let rb = null;              // active "buffer before playing" state
 let stallTimes = [];
+let bigBuffer = false;      // slow connection + no lower quality: use the big buffer target from now on
 let lastGoodTime = 0;       // last position reached by normal playback / allowed skips
 let skipping = false;       // true while OUR code is seeking (skip buttons, quality switch)
 let idleTimer = null;
@@ -381,6 +383,7 @@ function resetPlayerUi() {
   lastGoodTime = 0;
   skipping = false;
   stallTimes = [];
+  bigBuffer = false;
   progressPlayed.style.width = '0%';
   progressBuffered.style.width = '0%';
   timeLabel.textContent = '0:00 / 0:00';
@@ -486,6 +489,7 @@ function loadSource(src, resumeAt) {
 }
 
 function switchSource(src, message) {
+  bigBuffer = false;
   const resumeAt = videoEl.currentTime;
   const wasPlaying = !videoEl.paused || !!rb;
   cancelRebuffer();
@@ -546,13 +550,20 @@ function tickRebuffer() {
   if (!rb.checked && elapsed >= 4) {
     rb.checked = true;
     const rate = (ahead - rb.ahead0) / elapsed;
-    if (rate < MIN_FILL_RATE && canDowngrade()) {
-      downgrade();
-      return;
+    if (rate < MIN_FILL_RATE) {
+      if (canDowngrade()) {
+        downgrade();
+        return;
+      }
+      // nothing lower to switch to: wait for a much bigger buffer so the stops are rare and short-lived
+      bigBuffer = true;
+      rb.target = MAX_AHEAD;
+      toast('Slow connection, loading extra so it plays smoothly');
     }
   }
 
-  if (ahead >= need || now - rb.lastGrow > 5000 || elapsed > 40) finishRebuffer(true);
+  const maxWait = rb.target > 20 ? 90 : 40;
+  if (ahead >= need || now - rb.lastGrow > 3500 || elapsed > maxWait) finishRebuffer(true);
 }
 
 function finishRebuffer(resume) {
@@ -588,7 +599,7 @@ videoEl.addEventListener('waiting', () => {
     downgrade();
     return;
   }
-  startRebuffer(REBUFFER_AHEAD, true);
+  startRebuffer(bigBuffer ? MAX_AHEAD : REBUFFER_AHEAD, true);
 });
 
 /* ---------- controls ---------- */
