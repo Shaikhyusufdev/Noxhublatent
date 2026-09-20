@@ -9,8 +9,8 @@
 <body>
 
   <header class="marquee">
-    <h1>The Screening Room</h1>
-    <p>A private collection, organized by tier. Pick an episode to start watching.</p>
+    <h1 class="neon-title">NOX HUB</h1>
+    <p class="tagline">Premium Show Latent</p>
   </header>
 
   <main id="rows">
@@ -39,8 +39,14 @@
       <h3 id="choiceTitle"></h3>
       <p class="choice-sub">How would you like to watch this?</p>
       <div class="choice-buttons">
-        <button id="streamChoiceBtn" class="choice-btn stream-btn">▶ Stream</button>
-        <button id="downloadChoiceBtn" class="choice-btn download-btn">⬇ Download</button>
+        <button id="streamChoiceBtn" class="choice-btn stream-btn">
+          <span class="btn-icon">&#9654;</span>
+          <span>Stream</span>
+        </button>
+        <button id="downloadChoiceBtn" class="choice-btn download-btn">
+          <span class="btn-icon">&#8595;</span>
+          <span>Download</span>
+        </button>
       </div>
       <button class="choice-cancel" id="choiceCancelBtn">Cancel</button>
     </div>

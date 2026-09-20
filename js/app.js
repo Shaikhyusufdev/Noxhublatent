@@ -166,7 +166,9 @@ streamChoiceBtn.addEventListener('click', () => {
 downloadChoiceBtn.addEventListener('click', () => {
   closeChoice();
   runCountdown(() => {
-    window.open(DOWNLOAD_REDIRECT_URL, '_blank', 'noopener');
+    // same-tab redirect — window.open() after a delay gets blocked by
+    // browsers since it's no longer tied to a direct user click
+    window.location.href = DOWNLOAD_REDIRECT_URL;
   });
 });
 
