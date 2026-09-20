@@ -1091,6 +1091,19 @@ img {
   box-sizing: border-box;
 }
 
+.support-continue-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--red);
+  background: transparent;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
 .support-close-btn {
   margin-top: 14px;
   background: none;

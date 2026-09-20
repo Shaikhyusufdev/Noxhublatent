@@ -6,7 +6,7 @@ const TIERS = [
 ];
 
 // ⚠️ Set your real Telegram channel link here
-const TELEGRAM_URL = 'https://t.me/your_channel_here';
+const TELEGRAM_URL = 'https://t.me/+KCz9WCY-3f9hYzY1';
 
 // Download button redirect target
 const DOWNLOAD_REDIRECT_URL = 'https://apknox.online/FORHUB/?i=1';
@@ -220,6 +220,7 @@ function runCountdown(onDone) {
 /* ---------- step 3a: stream ---------- */
 
 async function openPlayer(item) {
+  currentItemId = item.id;
   titleEl.textContent = item.title;
   descEl.textContent = 'Loading...';
   overlay.classList.add('open');
@@ -240,7 +241,9 @@ async function openPlayer(item) {
     buildQualityMenu();
     descEl.textContent = item.description || '';
 
-    loadSource(pickInitialSource(), 0);
+    const resumeAt = getSavedPosition(item.id);
+    if (resumeAt) toast(`Continuing from ${fmtTime(resumeAt)}`);
+    loadSource(pickInitialSource(), resumeAt);
     attachFirstWatchTracker();
   } catch (err) {
     showSpinner(false);
@@ -249,6 +252,7 @@ async function openPlayer(item) {
 }
 
 function closePlayer() {
+  savePosition();
   leaveFullscreen();
   cancelRebuffer();
   overlay.classList.remove('open');
@@ -276,25 +280,73 @@ function attachFirstWatchTracker() {
   function onTimeUpdate() {
     if (videoEl.currentTime >= FIRST_WATCH_SECONDS) {
       videoEl.removeEventListener('timeupdate', onTimeUpdate);
-      videoEl.pause();
-      leaveFullscreen();
-      localStorage.setItem('nox_supportShown', '1');
-      supportOverlay.classList.add('open');
+      showSupportPopup();
     }
   }
 
   videoEl.addEventListener('timeupdate', onTimeUpdate);
 }
 
-function resumeAfterSupport() {
-  supportOverlay.classList.remove('open');
-  videoEl.play().catch(() => {});
+const supportMsg = document.getElementById('supportMsg');
+const supportContinueBtn = document.getElementById('supportContinueBtn');
+const SUPPORT_MSG_DEFAULT = supportMsg.textContent;
+
+let supportResumeAt = 0;   // exact spot where the video was paused for the popup
+let awaitingReturn = false; // viewer clicked "Join", we wait for them to come back
+let leftPage = false;
+
+function showSupportPopup() {
+  supportResumeAt = videoEl.currentTime;
+  cancelRebuffer();
+  videoEl.pause();
+  leaveFullscreen();
+  savePosition();
+  try { localStorage.setItem('nox_supportShown', '1'); } catch (e) { /* ignore */ }
+
+  awaitingReturn = false;
+  leftPage = false;
+  supportMsg.textContent = SUPPORT_MSG_DEFAULT;
+  supportContinueBtn.hidden = true;
+  supportOverlay.classList.add('open');
 }
 
+function resumeAfterSupport() {
+  awaitingReturn = false;
+  leftPage = false;
+  supportOverlay.classList.remove('open');
+
+  // continue from the exact same second, never from the start
+  if (Math.abs(videoEl.currentTime - supportResumeAt) > 0.5) {
+    skipping = true;
+    lastGoodTime = supportResumeAt;
+    videoEl.currentTime = supportResumeAt;
+  }
+  // top the buffer up again first (the tab was in the background), then play
+  startRebuffer(REBUFFER_AHEAD, true);
+  if (!rb) videoEl.play().catch(() => {});
+}
+
+// "Join Telegram": keep the video PAUSED while the viewer is away
 supportJoinBtn.addEventListener('click', () => {
-  resumeAfterSupport();
+  awaitingReturn = true;
+  supportMsg.textContent = 'Join the channel, then come back to this tab. Your video continues from where you stopped.';
+  supportContinueBtn.hidden = false;
 });
 
+// viewer came back to the tab -> resume automatically
+document.addEventListener('visibilitychange', () => {
+  if (!awaitingReturn) return;
+  if (document.visibilityState === 'hidden') leftPage = true;
+  else if (leftPage) resumeAfterSupport();
+});
+window.addEventListener('blur', () => {
+  if (awaitingReturn) leftPage = true;
+});
+window.addEventListener('focus', () => {
+  if (awaitingReturn && leftPage) resumeAfterSupport();
+});
+
+supportContinueBtn.addEventListener('click', resumeAfterSupport);
 supportCloseBtn.addEventListener('click', resumeAfterSupport);
 
 /* ---------- utils ---------- */
@@ -332,10 +384,12 @@ videoEl.addEventListener('contextmenu', (e) => e.preventDefault());
    - fullscreen + landscape (with a rotate fallback for iPhone)
    ===================================================================== */
 
-const INITIAL_AHEAD = 8;    // seconds that must be buffered before playback starts
-const REBUFFER_AHEAD = 12;  // seconds that must be buffered before resuming after a stall
+const INITIAL_AHEAD = 15;   // seconds that must be buffered before playback starts
+const REBUFFER_AHEAD = 30;  // seconds that must be buffered before resuming after a stall / low buffer
 const MIN_FILL_RATE = 1.2;  // media-seconds fetched per real second; below this the connection can't keep up
-const MAX_AHEAD = 45;       // when the connection is slow and there is no lower quality: buffer this much before playing
+const MAX_AHEAD = 50;       // when the connection is slow and there is no lower quality: buffer this much before playing
+const LOW_WATER = 6;        // playing with less than this many seconds buffered ahead -> pause early and refill
+const POS_SAVE_EVERY = 3000; // ms between saving the watch position
 
 const qualityWrap = document.getElementById('qualityWrap');
 const qualityBtn = document.getElementById('qualityBtn');
@@ -349,6 +403,10 @@ let currentSource = null;
 let qualityCap = null;      // set when we auto-downgrade, so the next video starts low too
 let rb = null;              // active "buffer before playing" state
 let stallTimes = [];
+let pauseBufferWorks = true; // false if this browser doesn't keep downloading while paused (then we just let it play)
+let lastRbEnd = 0;
+let currentItemId = null;
+let lastPosSave = 0;
 let bigBuffer = false;      // slow connection + no lower quality: use the big buffer target from now on
 let lastGoodTime = 0;       // last position reached by normal playback / allowed skips
 let skipping = false;       // true while OUR code is seeking (skip buttons, quality switch)
@@ -518,6 +576,11 @@ function downgrade() {
 
 function startRebuffer(target, resume) {
   if (rb) return;
+  if (!pauseBufferWorks) {
+    // this browser doesn't fetch while paused, so pausing only makes things worse
+    if (resume && videoEl.paused) videoEl.play().catch(() => {});
+    return;
+  }
   if (!videoEl.paused) videoEl.pause();
   const now = performance.now();
   const a = aheadSeconds();
@@ -562,8 +625,16 @@ function tickRebuffer() {
     }
   }
 
-  const maxWait = rb.target > 20 ? 90 : 40;
-  if (ahead >= need || now - rb.lastGrow > 3500 || elapsed > maxWait) finishRebuffer(true);
+  const maxWait = rb.target > 35 ? 90 : 40;
+  // no new data for a while: normal for a browser that has hit its own buffer limit,
+  // but wait longer if nothing has arrived at all yet (still connecting)
+  const idleLimit = ahead < 0.5 ? 12000 : 3500;
+  if (ahead >= need) {
+    finishRebuffer(true);
+  } else if (now - rb.lastGrow > idleLimit || elapsed > maxWait) {
+    if (ahead >= 0.5 && ahead < 5) pauseBufferWorks = false; // it stopped buffering while paused
+    finishRebuffer(true);
+  }
 }
 
 function finishRebuffer(resume) {
@@ -571,6 +642,7 @@ function finishRebuffer(resume) {
   clearInterval(rb.timer);
   const wantPlay = resume && rb.resume;
   rb = null;
+  lastRbEnd = performance.now();
   showSpinner(false);
   if (wantPlay) {
     videoEl.play().catch(() => stageEl.classList.remove('playing'));
@@ -583,7 +655,20 @@ function cancelRebuffer() {
   if (!rb) return;
   clearInterval(rb.timer);
   rb = null;
+  lastRbEnd = performance.now();
   showSpinner(false);
+}
+
+/* buffer running low while playing: pause a bit early and refill to 30-50s instead of freezing */
+function checkLowWater() {
+  if (rb || !pauseBufferWorks || videoEl.paused || videoEl.seeking || skipping) return;
+  const dur = videoEl.duration;
+  if (!isFinite(dur) || videoEl.currentTime < 1) return;
+  const ahead = aheadSeconds();
+  const notNearEnd = dur - videoEl.currentTime > ahead + 1.5;
+  if (ahead < LOW_WATER && notNearEnd && performance.now() - lastRbEnd > 15000) {
+    startRebuffer(bigBuffer ? MAX_AHEAD : REBUFFER_AHEAD, true);
+  }
 }
 
 /* a stall during normal playback: pause, refill the buffer, then continue */
@@ -749,6 +834,7 @@ videoEl.addEventListener('pause', () => {
 videoEl.addEventListener('ended', () => {
   stageEl.classList.remove('playing', 'idle');
   lastGoodTime = 0; // so replay (auto-seek to 0) isn't blocked by the seek guard
+  forgetPosition();
 });
 videoEl.addEventListener('volumechange', () => {
   stageEl.classList.toggle('is-muted', videoEl.muted || videoEl.volume === 0);
@@ -759,6 +845,12 @@ videoEl.addEventListener('timeupdate', () => {
   if (!videoEl.seeking) lastGoodTime = videoEl.currentTime;
   updateProgress();
   updateBuffered();
+  checkLowWater();
+  const now = Date.now();
+  if (now - lastPosSave > POS_SAVE_EVERY) {
+    lastPosSave = now;
+    savePosition();
+  }
 });
 videoEl.addEventListener('progress', updateBuffered);
 
@@ -783,6 +875,37 @@ videoEl.addEventListener('seeking', () => {
     videoEl.currentTime = lastGoodTime;
   }
 });
+
+/* ---------- remember where the viewer stopped ---------- */
+
+function posKey(id) {
+  return `nox_pos_${id}`;
+}
+
+function savePosition() {
+  if (!currentItemId || !isFinite(videoEl.duration) || videoEl.currentTime < 5) return;
+  try {
+    localStorage.setItem(posKey(currentItemId), JSON.stringify({ t: videoEl.currentTime, d: videoEl.duration }));
+  } catch (e) { /* storage full / blocked: ignore */ }
+}
+
+function forgetPosition() {
+  if (!currentItemId) return;
+  try { localStorage.removeItem(posKey(currentItemId)); } catch (e) { /* ignore */ }
+}
+
+function getSavedPosition(id) {
+  try {
+    const v = JSON.parse(localStorage.getItem(posKey(id)) || 'null');
+    if (v && v.t > 10 && (!v.d || v.t < v.d - 20)) return v.t;
+  } catch (e) { /* ignore */ }
+  return 0;
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') savePosition();
+});
+window.addEventListener('pagehide', savePosition);
 
 /* keyboard: space/K play-pause, arrows = 5s, F fullscreen, M mute */
 document.addEventListener('keydown', (e) => {
