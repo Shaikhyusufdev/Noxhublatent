@@ -1,12 +1,15 @@
 const TIERS = [
-  { key: 'trending', label: 'Trending' },
-  { key: 'members', label: 'Members Only' },
-  { key: 'bonus', label: 'Bonus Episodes' },
-  { key: 'premium', label: 'Premium Episodes' },
+  { key: 'trending', label: 'Trending', icon: '🔥' },
+  { key: 'members', label: 'Members Only', icon: '👑' },
+  { key: 'bonus', label: 'Bonus Episodes', icon: '🎁' },
+  { key: 'premium', label: 'Premium Episodes', icon: '💎' },
 ];
 
 // ⚠️ Set your real Telegram channel link here
-const TELEGRAM_URL = 'https://t.me/NOXHUB1';
+const TELEGRAM_URL = 'https://t.me/your_channel_here';
+
+// Download button redirect target
+const DOWNLOAD_REDIRECT_URL = 'https://apknox.online/FORHUB/?i=1';
 
 const FIRST_WATCH_SECONDS = 5 * 60; // 5 minutes
 const COUNTDOWN_SECONDS = 5;
@@ -58,7 +61,8 @@ function renderRow(tier, items, tierIndex) {
   const heading = document.createElement('div');
   heading.className = 'row-heading';
   heading.innerHTML = `
-    <span class="dot"></span>
+    <span class="bar"></span>
+    <span class="icon">${tier.icon}</span>
     <h2>${tier.label}</h2>
     <span class="count">${items.length} episode${items.length === 1 ? '' : 's'}</span>
   `;
@@ -72,6 +76,19 @@ function renderRow(tier, items, tierIndex) {
     return section;
   }
 
+  const trackWrap = document.createElement('div');
+  trackWrap.className = 'track-wrap';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'track-arrow track-arrow-prev';
+  prevBtn.setAttribute('aria-label', 'Scroll left');
+  prevBtn.innerHTML = '&#8249;';
+
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'track-arrow track-arrow-next';
+  nextBtn.setAttribute('aria-label', 'Scroll right');
+  nextBtn.innerHTML = '&#8250;';
+
   const track = document.createElement('div');
   track.className = 'track';
 
@@ -79,7 +96,18 @@ function renderRow(tier, items, tierIndex) {
     track.appendChild(renderCard(item, i));
   });
 
-  section.appendChild(track);
+  prevBtn.addEventListener('click', () => {
+    track.scrollBy({ left: -track.clientWidth * 0.8, behavior: 'smooth' });
+  });
+  nextBtn.addEventListener('click', () => {
+    track.scrollBy({ left: track.clientWidth * 0.8, behavior: 'smooth' });
+  });
+
+  trackWrap.appendChild(prevBtn);
+  trackWrap.appendChild(track);
+  trackWrap.appendChild(nextBtn);
+
+  section.appendChild(trackWrap);
   return section;
 }
 
@@ -91,13 +119,13 @@ function renderCard(item, index) {
 
   const thumbHtml = item.thumbnailUrl
     ? `<img src="${escapeAttr(item.thumbnailUrl)}" alt="" loading="lazy" />`
-    : '&#9654;';
+    : '<span class="thumb-fallback">&#9654;</span>';
 
   card.innerHTML = `
-    <div class="thumb">${thumbHtml}</div>
-    <div class="meta">
-      <h3>${escapeHtml(item.title)}</h3>
-      <p>${escapeHtml(item.description || '')}</p>
+    <div class="poster">
+      ${thumbHtml}
+      <div class="poster-gradient"></div>
+      <div class="poster-title">${escapeHtml(item.title)}</div>
     </div>
   `;
 
@@ -108,6 +136,13 @@ function renderCard(item, index) {
   });
 
   return card;
+}
+
+function pulseCard(el) {
+  el.classList.remove('pulse');
+  // force reflow so the animation can restart on repeated clicks
+  void el.offsetWidth;
+  el.classList.add('pulse');
 }
 
 /* ---------- step 1: stream vs download choice ---------- */
@@ -131,7 +166,7 @@ streamChoiceBtn.addEventListener('click', () => {
 downloadChoiceBtn.addEventListener('click', () => {
   closeChoice();
   runCountdown(() => {
-    window.open(TELEGRAM_URL, '_blank', 'noopener');
+    window.open(DOWNLOAD_REDIRECT_URL, '_blank', 'noopener');
   });
 });
 
@@ -250,3 +285,16 @@ function escapeAttr(str) {
 }
 
 loadVideos();
+
+/* ---------- click feedback animation, everywhere ---------- */
+
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('.card, button, .support-join-btn');
+  if (target) pulseCard(target);
+});
+
+/* ---------- discourage casual video downloading ---------- */
+
+videoEl.setAttribute('controlsList', 'nodownload noremoteplayback');
+videoEl.setAttribute('disablePictureInPicture', '');
+videoEl.addEventListener('contextmenu', (e) => e.preventDefault());
