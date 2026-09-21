@@ -25,6 +25,26 @@
 
     <section id="adminPanel" class="panel" hidden>
 
+      <h2 class="list-heading section-first">Categories</h2>
+      <p class="hint">A new category appears at the top of the homepage.</p>
+
+      <form id="categoryForm" class="add-form cat-form">
+        <div class="field">
+          <label for="newCategoryLabel">New category name</label>
+          <input id="newCategoryLabel" maxlength="40" placeholder="e.g. New Arrivals" required />
+        </div>
+        <div class="field">
+          <label for="newCategoryEmoji">Emoji (optional)</label>
+          <input id="newCategoryEmoji" maxlength="8" placeholder="🔥" />
+        </div>
+        <button type="submit">Add category</button>
+      </form>
+
+      <p id="categoryMessage" class="form-message"></p>
+      <div id="categoryList" class="category-list"></div>
+
+      <h2 class="list-heading">Add episode</h2>
+
       <form id="addForm" class="add-form">
         <div class="field">
           <label for="title">Title</label>
@@ -33,12 +53,7 @@
 
         <div class="field">
           <label for="category">Category</label>
-          <select id="category" name="category" required>
-            <option value="trending">Trending</option>
-            <option value="members">Members Only</option>
-            <option value="bonus">Bonus Episodes</option>
-            <option value="premium">Premium Episodes</option>
-          </select>
+          <select id="category" name="category" required></select>
         </div>
 
         <div class="field">
