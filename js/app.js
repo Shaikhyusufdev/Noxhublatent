@@ -53,6 +53,21 @@ supportJoinBtn.href = TELEGRAM_URL;
 let pendingItem = null;
 let countdownTimer = null;
 let firstWatchListenerAttached = false;
+let prefetchPromise = null;
+let prefetchItemId = null;
+
+// starts fetching the signed video link right away, in parallel with the
+// countdown, so there's no extra wait once the countdown finishes
+function prefetchStream(item) {
+  prefetchItemId = item.id;
+  prefetchPromise = fetch(`/api/stream/${item.id}`).then(async (res) => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not load video');
+    return Array.isArray(data.sources) && data.sources.length
+      ? data.sources
+      : [{ label: 'Original', height: 9999, url: data.url }];
+  });
+}
 
 async function loadVideos() {
   const res = await fetch('/api/videos');
@@ -172,6 +187,7 @@ function closeChoice() {
 streamChoiceBtn.addEventListener('click', () => {
   const item = pendingItem;
   closeChoice();
+  prefetchStream(item); // link countdown ke saath hi fetch hona shuru
   runCountdown(() => openPlayer(item));
 });
 
@@ -231,13 +247,17 @@ async function openPlayer(item) {
   showSpinner(true);
 
   try {
-    const res = await fetch(`/api/stream/${item.id}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Could not load video');
+    const canUsePrefetch = prefetchItemId === item.id && prefetchPromise;
+    sources = canUsePrefetch
+      ? await prefetchPromise
+      : await fetch(`/api/stream/${item.id}`).then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Could not load video');
+          return Array.isArray(data.sources) && data.sources.length
+            ? data.sources
+            : [{ label: 'Original', height: 9999, url: data.url }];
+        });
 
-    sources = Array.isArray(data.sources) && data.sources.length
-      ? data.sources
-      : [{ label: 'Original', height: 9999, url: data.url }];
     buildQualityMenu();
     descEl.textContent = item.description || '';
 
@@ -248,6 +268,9 @@ async function openPlayer(item) {
   } catch (err) {
     showSpinner(false);
     descEl.textContent = 'Could not load this video right now. Please try again.';
+  } finally {
+    prefetchPromise = null;
+    prefetchItemId = null;
   }
 }
 
