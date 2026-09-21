@@ -1,3 +1,4 @@
+// Fallback only: the real list (and its order) comes from /api/categories, managed in the admin panel.
 const TIERS = [
   { key: 'trending', label: 'Trending', icon: '🔥' },
   { key: 'members', label: 'Members Only', icon: '👑' },
@@ -74,10 +75,24 @@ function prefetchStream(item) {
 }
 
 async function loadVideos() {
-  const res = await fetch('/api/videos');
-  const videos = await res.json();
+  const [videosRes, catsRes] = await Promise.all([
+    fetch('/api/videos'),
+    fetch('/api/categories').catch(() => null),
+  ]);
+  const videos = await videosRes.json();
 
-  TIERS.forEach((tier, tierIndex) => {
+  // rows are drawn in the order the API returns them (newest category first)
+  let tiers = TIERS;
+  try {
+    if (catsRes && catsRes.ok) {
+      const list = await catsRes.json();
+      if (Array.isArray(list) && list.length) tiers = list;
+    }
+  } catch (_) {
+    /* keep the fallback list */
+  }
+
+  tiers.forEach((tier, tierIndex) => {
     const items = videos.filter((v) => v.category === tier.key);
     rowsEl.appendChild(renderRow(tier, items, tierIndex));
   });
@@ -93,8 +108,8 @@ function renderRow(tier, items, tierIndex) {
   heading.className = 'row-heading';
   heading.innerHTML = `
     <span class="bar"></span>
-    <span class="icon">${tier.icon}</span>
-    <h2>${tier.label}</h2>
+    <span class="icon">${escapeHtml(tier.icon || '📁')}</span>
+    <h2>${escapeHtml(tier.label)}</h2>
     <span class="count">${items.length} episode${items.length === 1 ? '' : 's'}</span>
   `;
   section.appendChild(heading);
