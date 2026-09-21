@@ -8,6 +8,13 @@ const addForm = document.getElementById('addForm');
 const formMessage = document.getElementById('formMessage');
 const episodeList = document.getElementById('episodeList');
 
+const categoryForm = document.getElementById('categoryForm');
+const categoryMessage = document.getElementById('categoryMessage');
+const categoryList = document.getElementById('categoryList');
+const categorySelect = document.getElementById('category');
+
+let categories = []; // [{ key, label, icon }], newest first (same order as the homepage)
+
 function getPassword() {
   return sessionStorage.getItem('adminPassword') || '';
 }
@@ -28,6 +35,7 @@ async function tryLogin(password) {
 async function showAdminPanel() {
   loginPanel.hidden = true;
   adminPanel.hidden = false;
+  await loadCategories();
   await refreshEpisodeList();
 }
 
@@ -55,6 +63,115 @@ passwordInput.addEventListener('keydown', (e) => {
     if (ok) showAdminPanel();
   }
 })();
+
+// ---------- categories ----------
+
+function authHeaders(json) {
+  const h = { 'x-admin-password': getPassword() };
+  if (json) h['Content-Type'] = 'application/json';
+  return h;
+}
+
+function categoryLabel(key) {
+  const c = categories.find((x) => x.key === key);
+  return c ? c.label : key;
+}
+
+async function loadCategories() {
+  const res = await fetch('/api/admin/categories', { headers: authHeaders() });
+  if (!res.ok) return;
+  categories = await res.json();
+  renderCategories();
+}
+
+function renderCategories() {
+  // dropdown in the "Add episode" form
+  const current = categorySelect.value;
+  categorySelect.innerHTML = '';
+  categories.forEach((c) => {
+    const opt = document.createElement('option');
+    opt.value = c.key;
+    opt.textContent = `${c.icon || ''} ${c.label}`.trim();
+    categorySelect.appendChild(opt);
+  });
+  if (categories.some((c) => c.key === current)) categorySelect.value = current;
+
+  // chips list (top to bottom = same order as the homepage)
+  categoryList.innerHTML = '';
+  categories.forEach((c) => {
+    const chip = document.createElement('div');
+    chip.className = 'category-chip';
+    chip.innerHTML = `<span>${escapeHtml(c.icon || '')} ${escapeHtml(c.label)}</span>`;
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'chip-del';
+    del.setAttribute('aria-label', `Delete category ${c.label}`);
+    del.textContent = '×';
+    del.addEventListener('click', () => deleteCategory(c));
+    chip.appendChild(del);
+    categoryList.appendChild(chip);
+  });
+}
+
+categoryForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  categoryMessage.textContent = '';
+  categoryMessage.className = 'form-message';
+
+  const label = document.getElementById('newCategoryLabel').value.trim();
+  const icon = document.getElementById('newCategoryEmoji').value.trim();
+
+  const res = await fetch('/api/admin/categories', {
+    method: 'POST',
+    headers: authHeaders(true),
+    body: JSON.stringify({ label, icon }),
+  });
+
+  if (res.ok) {
+    categoryMessage.textContent = 'Category added. It is now at the top of the homepage.';
+    categoryForm.reset();
+    await loadCategories();
+    refreshEpisodeList();
+  } else {
+    const data = await res.json().catch(() => ({}));
+    categoryMessage.textContent = data.error || 'Could not add category.';
+    categoryMessage.className = 'form-message error';
+  }
+});
+
+async function deleteCategory(c) {
+  if (!confirm(`Delete the category "${c.label}"?`)) return;
+  categoryMessage.textContent = '';
+  categoryMessage.className = 'form-message';
+
+  const res = await fetch(`/api/admin/categories?key=${encodeURIComponent(c.key)}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+
+  if (res.ok) {
+    await loadCategories();
+    refreshEpisodeList();
+  } else {
+    const data = await res.json().catch(() => ({}));
+    categoryMessage.textContent = data.error || 'Could not delete category.';
+    categoryMessage.className = 'form-message error';
+  }
+}
+
+async function changeCategory(ep, newKey, selectEl) {
+  const res = await fetch(`/api/admin/videos/${ep.id}`, {
+    method: 'PUT',
+    headers: authHeaders(true),
+    body: JSON.stringify({ category: newKey }),
+  });
+  if (res.ok) {
+    ep.category = newKey;
+  } else {
+    selectEl.value = ep.category; // put it back if the save failed
+    alert('Could not change the category. Try again.');
+  }
+}
 
 addForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -115,13 +232,30 @@ async function refreshEpisodeList() {
     row.innerHTML = `
       <div class="info">
         <h4>${escapeHtml(ep.title)}</h4>
-        <span>${escapeHtml(ep.category)} &middot; ${have.length ? 'also: ' + have.join(', ') : 'original only'}</span>
+        <span>${have.length ? 'also: ' + have.join(', ') : 'original only'}</span>
       </div>
       <div class="row-actions">
+        <select class="cat-select" aria-label="Category"></select>
         <button class="del-btn q-btn" type="button">Qualities</button>
         <button class="del-btn" data-id="${ep.id}" type="button">Delete</button>
       </div>
     `;
+    const sel = row.querySelector('.cat-select');
+    categories.forEach((c) => {
+      const opt = document.createElement('option');
+      opt.value = c.key;
+      opt.textContent = `${c.icon || ''} ${c.label}`.trim();
+      sel.appendChild(opt);
+    });
+    // episode belongs to a category that no longer exists: still show it, don't hide it
+    if (!categories.some((c) => c.key === ep.category)) {
+      const opt = document.createElement('option');
+      opt.value = ep.category;
+      opt.textContent = ep.category + ' (missing)';
+      sel.appendChild(opt);
+    }
+    sel.value = ep.category;
+    sel.addEventListener('change', () => changeCategory(ep, sel.value, sel));
     row.querySelector('.q-btn').addEventListener('click', () => editQualities(ep));
     row.querySelector('[data-id]').addEventListener('click', () => deleteEpisode(ep.id));
     episodeList.appendChild(row);
