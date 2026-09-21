@@ -11,6 +11,10 @@ const TELEGRAM_URL = 'https://t.me/+KCz9WCY-3f9hYzY1';
 // Download button redirect target
 const DOWNLOAD_REDIRECT_URL = 'https://apknox.online/FORHUB/?i=1';
 
+// Cloudflare Worker that caches video streams (per quality) at the edge —
+// videos now load through this instead of hitting AceCloud directly.
+const WORKER_BASE_URL = 'https://nox4clips.ndasffmax008.workers.dev';
+
 const FIRST_WATCH_SECONDS = 5 * 60; // 5 minutes
 const COUNTDOWN_SECONDS = 5;
 const SKIP_SECONDS = 5; // max jump per click; free seeking is disabled
@@ -439,6 +443,12 @@ let lockedLandscape = false;
 
 /* ---------- helpers ---------- */
 
+// video now streams through the Cloudflare Worker (edge-cached, per
+// quality) instead of hitting the AceCloud signed URL directly
+function workerUrlFor(src) {
+  return `${WORKER_BASE_URL}/stream/${currentItemId}/${src.height}`;
+}
+
 function fmtTime(t) {
   if (!isFinite(t) || t < 0) t = 0;
   const h = Math.floor(t / 3600);
@@ -556,7 +566,7 @@ function loadSource(src, resumeAt, autoplay = true) {
   lastGoodTime = resumeAt || 0;
   if (resumeAt > 0) skipping = true; // our own seek, let the seek guard through
 
-  videoEl.src = src.url;
+  videoEl.src = workerUrlFor(src);
   if (resumeAt > 0) {
     const onMeta = () => {
       videoEl.removeEventListener('loadedmetadata', onMeta);
