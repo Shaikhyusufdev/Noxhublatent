@@ -1113,3 +1113,192 @@ img {
   cursor: pointer;
   text-decoration: underline;
 }
+
+/* =====================================================================
+   CARD UPGRADE — landscape cards (full banner), rainbow glow border
+   Paste at the very END of css/style.css
+   ===================================================================== */
+
+:root {
+  /* change this one line to reshape every card, e.g. 2 / 1 for wider ones */
+  --card-ratio: 16 / 9;
+  --rainbow: linear-gradient(
+    90deg,
+    #ff1a3c, #ff8a00, #ffe600, #2bff88, #00eaff, #8a2be2, #ff1493, #ff1a3c
+  );
+}
+
+@keyframes cardRainbow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+/* row heading */
+.row-heading .bar {
+  background: var(--red); /* default for categories you create yourself */
+}
+
+.row-heading h2 {
+  font-size: 1.5rem;
+  letter-spacing: 0.01em;
+}
+
+.row-heading .count {
+  margin-left: 6px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+/* scroller: extra room so the glow is never clipped */
+.row .track {
+  gap: 24px;
+  padding: 20px 6vw 22px;
+  scroll-padding: 0 6vw; /* first card keeps its left margin after snapping */
+}
+
+.row .track .card {
+  flex: 0 0 clamp(260px, 26vw, 360px);
+  padding-bottom: 50px; /* space for the title under the banner */
+}
+
+/* the banner itself: full image, no crop */
+.row .track .card .poster {
+  aspect-ratio: var(--card-ratio);
+  border: none;
+  border-radius: 14px;
+  background: #0d0709;
+  box-shadow: none;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.row .track .card .poster img {
+  border-radius: 14px;
+  transition: filter 0.25s ease;
+}
+
+/* animated rainbow border line */
+.row .track .card .poster::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2.5px;
+  border-radius: 14px;
+  background: var(--rainbow);
+  background-size: 200% 100%;
+  animation: cardRainbow 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box exclude, linear-gradient(#fff 0 0);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* soft rainbow glow around the card */
+.row .track .card .poster::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 16px;
+  background: var(--rainbow);
+  background-size: 200% 100%;
+  animation: cardRainbow 4s linear infinite;
+  filter: blur(13px);
+  opacity: 0.5;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.row .track .card:hover .poster::after,
+.row .track .card:focus-visible .poster::after {
+  opacity: 0.95;
+}
+
+/* the old bottom gradient becomes a hover "play" layer */
+.row .track .card .poster-gradient {
+  inset: 0;
+  height: auto;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.row .track .card .poster-gradient::after {
+  content: '\25B6';
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  padding-left: 4px;
+  border-radius: 50%;
+  background: rgba(255, 26, 60, 0.92);
+  color: #fff;
+  font-size: 1.15rem;
+  box-shadow: 0 0 22px rgba(255, 26, 60, 0.75);
+}
+
+.row .track .card:hover .poster-gradient,
+.row .track .card:focus-visible .poster-gradient {
+  opacity: 1;
+}
+
+/* title sits under the banner, so it never covers the artwork */
+.row .track .card .poster-title {
+  top: calc(100% + 12px);
+  bottom: auto;
+  left: 4px;
+  right: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-shadow: none;
+  color: var(--text);
+}
+
+.row .track .card:hover {
+  box-shadow: none;
+  transform: translateY(-5px) scale(1.02);
+}
+
+.row .track .card:focus-visible {
+  outline: none;
+}
+
+/* arrows line up with the banner area, not the title */
+.track-arrow {
+  top: 20px;
+  bottom: 72px;
+}
+
+/* phones / tablets: swipe instead of arrow buttons */
+@media (hover: none) {
+  .track-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .row .track {
+    gap: 18px;
+  }
+  .row .track .card {
+    flex: 0 0 78vw;
+    max-width: 330px;
+  }
+  .row-heading h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row .track .card .poster::before,
+  .row .track .card .poster::after {
+    animation: none;
+  }
+}
