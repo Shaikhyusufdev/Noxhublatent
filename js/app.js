@@ -9,6 +9,9 @@ const TIERS = [
 // ⚠️ Set your real Telegram channel link here
 const TELEGRAM_URL = 'https://t.me/+KCz9WCY-3f9hYzY1';
 
+// ⚠️ Set your real Instagram profile link here
+const INSTAGRAM_URL = 'https://www.instagram.com/shaikhyusuf.dev/';
+
 // Download button redirect target
 const DOWNLOAD_REDIRECT_URL = 'https://apknox.online/FORHUB/?i=1';
 
@@ -54,6 +57,12 @@ const supportJoinBtn = document.getElementById('supportJoinBtn');
 const supportCloseBtn = document.getElementById('supportCloseBtn');
 
 supportJoinBtn.href = TELEGRAM_URL;
+
+// footer "Support us" links
+const footerInstagram = document.getElementById('footerInstagram');
+const footerTelegram = document.getElementById('footerTelegram');
+if (footerInstagram) footerInstagram.href = INSTAGRAM_URL;
+if (footerTelegram) footerTelegram.href = TELEGRAM_URL;
 
 let pendingItem = null;
 let countdownTimer = null;
@@ -876,12 +885,13 @@ stageEl.addEventListener(
   },
   true
 );
+// tapping/clicking the video itself only reveals the controls now —
+// play/pause happens only via the center play/pause button
 videoEl.addEventListener('click', () => {
   if (tapWasIdle) {
     tapWasIdle = false;
     return;
   }
-  togglePlay();
   wakeControls();
 });
 videoEl.addEventListener('dblclick', toggleFullscreen);
