@@ -1,5 +1,6 @@
 const { getVideos } = require('../../lib/videos');
 const { getStreamUrl } = require('../../lib/s3');
+const { recordView } = require('../../lib/analytics');
 
 // Optional lower-quality copies live in video.qualities, e.g. { "720": "Latent/ep1_720.mp4", "480": "...", "360": "..." }
 const QUALITY_LEVELS = [720, 480, 360];
@@ -20,6 +21,8 @@ module.exports = async (req, res) => {
     for (const h of QUALITY_LEVELS) {
       if (q[h]) sources.push({ label: `${h}p`, height: h, url: await getStreamUrl(q[h]) });
     }
+
+    await recordView(id); // counted before responding, since Vercel functions can terminate right after res.json()
 
     res.setHeader('Cache-Control', 'no-store');
     // `url` kept for backwards compatibility
