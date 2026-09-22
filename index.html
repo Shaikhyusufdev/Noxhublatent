@@ -26,8 +26,102 @@
   </main>
 
   <footer class="site-footer">
-    <p>Support us &middot; <a id="footerInstagram" href="#" target="_blank" rel="noopener">Instagram</a> &middot; <a id="footerTelegram" href="#" target="_blank" rel="noopener">Telegram</a></p>
+    <div class="footer-inner">
+      <p class="footer-tagline"><span class="footer-heart">&#10084;</span> Support NoxHub</p>
+      <div class="footer-links">
+        <a class="footer-link footer-instagram" id="footerInstagram" href="#" target="_blank" rel="noopener">
+          <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+        <a class="footer-link footer-telegram" id="footerTelegram" href="#" target="_blank" rel="noopener">
+          <svg class="footer-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21.9 4.3 2.6 11.9c-1 .4-1 1 .1 1.4l4.9 1.5 1.9 6.2c.2.6.4.8.8.8s.6-.2.9-.5l2.3-2.2 4.7 3.5c.8.6 1.4.3 1.6-.7l3-14.4c.3-1.2-.4-1.7-1.4-1.2Z"/>
+          </svg>
+          <span>Telegram</span>
+        </a>
+      </div>
+    </div>
   </footer>
+
+  <style>
+    .site-footer {
+      margin-top: 56px;
+      padding: 40px 24px 48px;
+      text-align: center;
+      animation: footerFadeUp 0.7s ease both;
+    }
+    @keyframes footerFadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .footer-inner::before {
+      content: '';
+      display: block;
+      width: 120px;
+      height: 1px;
+      margin: 0 auto 28px;
+      background: linear-gradient(90deg, transparent, rgba(230, 190, 120, 0.55), transparent);
+    }
+    .footer-tagline {
+      margin: 0 0 18px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .footer-heart {
+      display: inline-block;
+      color: #e63946;
+      margin-right: 6px;
+      animation: footerHeartBeat 1.6s ease-in-out infinite;
+    }
+    @keyframes footerHeartBeat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.25); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.15); }
+      60% { transform: scale(1); }
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: #eee;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+    }
+    .footer-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .footer-link:hover, .footer-link:focus-visible { transform: translateY(-3px); }
+    .footer-link:active { transform: translateY(-1px) scale(0.97); }
+    .footer-instagram:hover {
+      border-color: transparent;
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+      box-shadow: 0 8px 24px rgba(221, 42, 123, 0.35);
+    }
+    .footer-telegram:hover {
+      border-color: rgba(41, 182, 246, 0.6);
+      background: rgba(41, 182, 246, 0.12);
+      color: #29b6f6;
+      box-shadow: 0 8px 24px rgba(41, 182, 246, 0.25);
+    }
+  </style>
 
   <div class="player-overlay" id="playerOverlay">
     <div class="player-box">
