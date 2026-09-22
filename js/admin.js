@@ -13,6 +13,9 @@ const categoryMessage = document.getElementById('categoryMessage');
 const categoryList = document.getElementById('categoryList');
 const categorySelect = document.getElementById('category');
 
+const analyticsTotal = document.getElementById('analyticsTotal');
+const analyticsList = document.getElementById('analyticsList');
+
 let categories = []; // [{ key, label, icon }], newest first (same order as the homepage)
 
 function getPassword() {
@@ -37,6 +40,7 @@ async function showAdminPanel() {
   adminPanel.hidden = false;
   await loadCategories();
   await refreshEpisodeList();
+  refreshAnalytics();
 }
 
 loginBtn.addEventListener('click', async () => {
@@ -286,6 +290,39 @@ async function deleteEpisode(id) {
     headers: { 'x-admin-password': getPassword() },
   });
   refreshEpisodeList();
+}
+
+// ---------- analytics ----------
+
+async function refreshAnalytics() {
+  const res = await fetch('/api/admin/analytics', {
+    headers: { 'x-admin-password': getPassword() },
+  });
+  if (!res.ok) return;
+  const { rows, totalViews } = await res.json();
+
+  analyticsTotal.textContent = `Total views across all episodes: ${totalViews}`;
+
+  analyticsList.innerHTML = '';
+  if (rows.length === 0) {
+    analyticsList.innerHTML = '<p class="form-message">No episodes yet.</p>';
+    return;
+  }
+
+  rows.forEach((r) => {
+    const row = document.createElement('div');
+    row.className = 'episode-row';
+    row.innerHTML = `
+      <div class="info">
+        <h4>${escapeHtml(r.title)}</h4>
+        <span>${escapeHtml(categoryLabel(r.category))}</span>
+      </div>
+      <div class="row-actions">
+        <span class="view-count">${r.views} view${r.views === 1 ? '' : 's'}</span>
+      </div>
+    `;
+    analyticsList.appendChild(row);
+  });
 }
 
 function escapeHtml(str) {
