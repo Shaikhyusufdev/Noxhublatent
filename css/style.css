@@ -1004,39 +1004,97 @@ img {
 }
 
 .countdown-box {
-  width: min(520px, 100%);
+  position: relative;
+  width: min(340px, 92vw);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 40px 28px;
+  padding: 14px;
   text-align: center;
 }
 
-.countdown-label {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin: 0 0 10px;
-}
-
-.countdown-number {
-  font-family: 'Fraunces', serif;
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 18px;
-}
-
-.countdown-bar {
+/* portrait ad slot: fixed aspect box so the popup doesn't jump around
+   once a real ad renders inside it */
+.countdown-ad-slot {
+  position: relative;
   width: 100%;
-  height: 6px;
-  border-radius: 3px;
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
   background: var(--surface-2);
+  border: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
-.countdown-bar-fill {
+.countdown-ad-placeholder {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* small circular skip badge, top-right corner over the ad */
+.countdown-ring-btn {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(6, 6, 9, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.countdown-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  width: 0%;
-  background: var(--gold);
+  transform: rotate(-90deg); /* start the ring from 12 o'clock */
+}
+
+.countdown-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 2.5;
+}
+
+.countdown-ring-fill {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.countdown-ring-num {
+  position: relative;
+  color: #fff;
+  font-family: 'Fraunces', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.countdown-ring-close {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+/* once the X appears the badge becomes clickable */
+.countdown-ring-btn:has(.countdown-ring-close:not([hidden])) {
+  cursor: pointer;
 }
 
 /* ---------- support/telegram modal ---------- */
