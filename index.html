@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>(function(s){s.dataset.zone='11899208',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>nox4clip — Screening Room</title>
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Monetag vignette ad script -->
+  <script>(function(s){s.dataset.zone='11899377',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
 </head>
 <body>
 
@@ -210,9 +213,24 @@
 
   <div class="countdown-overlay" id="countdownOverlay">
     <div class="countdown-box">
-      <p class="countdown-label">Please wait</p>
-      <div class="countdown-number" id="countdownNumber">5</div>
-      <div class="countdown-bar"><div class="countdown-bar-fill" id="countdownBarFill"></div></div>
+      <!-- ===== Portrait ad goes here =====
+           If you get a proper Monetag "Banner" <div id="..."> tag later,
+           paste it INSIDE #countdownAdSlot below, and delete the
+           <span class="countdown-ad-placeholder"> line. -->
+      <div class="countdown-ad-slot" id="countdownAdSlot">
+        <span class="countdown-ad-placeholder">Ad</span>
+      </div>
+
+      <button class="countdown-ring-btn" id="countdownRingBtn" aria-label="Skip ad">
+        <svg class="countdown-ring" viewBox="0 0 40 40">
+          <circle class="countdown-ring-track" cx="20" cy="20" r="17"></circle>
+          <circle class="countdown-ring-fill" id="countdownRingFill" cx="20" cy="20" r="17"></circle>
+        </svg>
+        <span class="countdown-ring-num" id="countdownNumber">10</span>
+        <svg class="countdown-ring-close" id="countdownCloseIcon" viewBox="0 0 24 24" hidden>
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
     </div>
   </div>
 
