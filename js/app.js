@@ -20,7 +20,7 @@ const DOWNLOAD_REDIRECT_URL = 'https://apknox.online/FORHUB/?i=1';
 const WORKER_BASE_URL = 'https://nox4clips.ndasffmax008.workers.dev';
 
 const FIRST_WATCH_SECONDS = 5 * 60; // 5 minutes
-const COUNTDOWN_SECONDS = 5;
+const COUNTDOWN_SECONDS = 10; // portrait ad slot: 10s ring countdown, then a skip (X) button
 const SKIP_SECONDS = 5; // max jump per click; free seeking is disabled
 
 const rowsEl = document.getElementById('rows');
@@ -50,7 +50,10 @@ const choiceCancelBtn = document.getElementById('choiceCancelBtn');
 
 const countdownOverlay = document.getElementById('countdownOverlay');
 const countdownNumber = document.getElementById('countdownNumber');
-const countdownBarFill = document.getElementById('countdownBarFill');
+const countdownRingBtn = document.getElementById('countdownRingBtn');
+const countdownRingFill = document.getElementById('countdownRingFill');
+const countdownCloseIcon = document.getElementById('countdownCloseIcon');
+const COUNTDOWN_RING_CIRCUMFERENCE = 2 * Math.PI * 17; // matches the SVG circle's r=17
 
 const supportOverlay = document.getElementById('supportOverlay');
 const supportJoinBtn = document.getElementById('supportJoinBtn');
@@ -233,28 +236,48 @@ choiceOverlay.addEventListener('click', (e) => {
   if (e.target === choiceOverlay) closeChoice();
 });
 
-/* ---------- step 2: 5s countdown (ad slot placeholder) ---------- */
+/* ---------- step 2: portrait ad + circular countdown (10 -> 1, then a skip X) ---------- */
 
 function runCountdown(onDone) {
   let secondsLeft = COUNTDOWN_SECONDS;
+  let finished = false;
+
+  function finish() {
+    if (finished) return;
+    finished = true;
+    clearInterval(countdownTimer);
+    countdownOverlay.classList.remove('open');
+    countdownRingBtn.onclick = null;
+    onDone();
+  }
+
+  // reset the ring + number, hide the close (X) icon
+  countdownNumber.hidden = false;
   countdownNumber.textContent = secondsLeft;
-  countdownBarFill.style.transition = 'none';
-  countdownBarFill.style.width = '0%';
+  countdownCloseIcon.hidden = true;
+  countdownRingFill.style.transition = 'none';
+  countdownRingFill.style.strokeDasharray = `${COUNTDOWN_RING_CIRCUMFERENCE}`;
+  countdownRingFill.style.strokeDashoffset = '0';
   countdownOverlay.classList.add('open');
 
-  // kick off the bar animation on next frame
+  // the ring empties out smoothly over the full countdown, like a clock
   requestAnimationFrame(() => {
-    countdownBarFill.style.transition = `width ${COUNTDOWN_SECONDS}s linear`;
-    countdownBarFill.style.width = '100%';
+    countdownRingFill.style.transition = `stroke-dashoffset ${COUNTDOWN_SECONDS}s linear`;
+    countdownRingFill.style.strokeDashoffset = `${COUNTDOWN_RING_CIRCUMFERENCE}`;
   });
+
+  // once the ring becomes an X, clicking it (or just waiting) closes the ad
+  countdownRingBtn.onclick = () => {
+    if (secondsLeft <= 0) finish();
+  };
 
   clearInterval(countdownTimer);
   countdownTimer = setInterval(() => {
     secondsLeft -= 1;
     if (secondsLeft <= 0) {
-      clearInterval(countdownTimer);
-      countdownOverlay.classList.remove('open');
-      onDone();
+      countdownNumber.hidden = true;
+      countdownCloseIcon.hidden = false;
+      finish(); // auto-closes the moment the X appears, no click required
       return;
     }
     countdownNumber.textContent = secondsLeft;
