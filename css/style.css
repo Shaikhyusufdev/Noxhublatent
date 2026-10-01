@@ -1360,3 +1360,238 @@ img {
     animation: none;
   }
 }
+
+/* =====================================================================
+   TOP PROMO BANNER (above trending row)
+   ===================================================================== */
+
+.nx-promo {
+  --nx-rainbow: linear-gradient(90deg, #ff1a3c, #ff8a00, #ffe600, #2bff88, #00eaff, #8a2be2, #ff1493, #ff1a3c);
+  position: relative;
+  display: block;
+  margin: 26px 6vw 8px;
+  border-radius: 18px;
+  text-decoration: none;
+  color: #fff;
+  isolation: isolate;
+  animation: nxPromoIn 0.7s ease both, nxPromoFloat 4s ease-in-out 0.7s infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes nxPromoIn {
+  from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes nxPromoFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes nxRainbow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+/* animated rainbow border */
+.nx-promo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2.5px;
+  border-radius: 18px;
+  background: var(--nx-rainbow);
+  background-size: 200% 100%;
+  animation: nxRainbow 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box exclude, linear-gradient(#fff 0 0);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* soft rainbow glow behind the banner */
+.nx-promo::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: var(--nx-rainbow);
+  background-size: 200% 100%;
+  animation: nxRainbow 4s linear infinite;
+  filter: blur(18px);
+  opacity: 0.45;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.nx-promo:hover::after { opacity: 0.85; }
+
+/* inner dark panel */
+.nx-promo-in {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255, 26, 60, 0.28), transparent 55%),
+    radial-gradient(circle at 90% 90%, rgba(138, 43, 226, 0.25), transparent 55%),
+    linear-gradient(135deg, #1b0b10, #0d0709);
+}
+
+/* light sweep across the banner */
+.nx-sweep {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transform: skewX(-20deg);
+  animation: nxSweep 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes nxSweep {
+  0%   { left: -60%; }
+  55%, 100% { left: 130%; }
+}
+
+/* floating sparkles */
+.nx-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 2px rgba(255, 59, 92, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  animation: nxSpark 5s ease-in-out infinite;
+}
+.nx-s1 { left: 8%;  bottom: 12%; animation-delay: 0s; }
+.nx-s2 { left: 38%; bottom: 8%;  animation-delay: 1.2s; background: #00eaff; box-shadow: 0 0 10px 2px rgba(0, 234, 255, 0.9); }
+.nx-s3 { left: 66%; bottom: 14%; animation-delay: 2.4s; background: #ffe600; box-shadow: 0 0 10px 2px rgba(255, 230, 0, 0.9); }
+.nx-s4 { left: 90%; bottom: 10%; animation-delay: 3.4s; }
+@keyframes nxSpark {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(-90px) scale(1.2); opacity: 0; }
+}
+
+/* code icon */
+.nx-promo-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ff1a3c, #8a2be2);
+  box-shadow: 0 0 24px rgba(255, 26, 60, 0.7);
+  animation: nxIconPulse 2s ease-in-out infinite;
+}
+.nx-promo-icon svg { width: 32px; height: 32px; }
+@keyframes nxIconPulse {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 18px rgba(255, 26, 60, 0.6); }
+  50%      { transform: scale(1.08); box-shadow: 0 0 34px rgba(255, 59, 92, 0.95); }
+}
+
+/* text */
+.nx-promo-text { position: relative; flex: 1 1 auto; min-width: 0; }
+
+.nx-promo-badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #fff;
+  background: linear-gradient(90deg, #ff1a3c, #ff1493);
+  animation: nxBadge 1.6s ease-in-out infinite;
+}
+@keyframes nxBadge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 26, 60, 0.6); }
+  50%      { box-shadow: 0 0 0 8px rgba(255, 26, 60, 0); }
+}
+
+.nx-promo-title {
+  margin: 0 0 4px;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.2rem, 3.2vw, 1.8rem);
+  line-height: 1.15;
+  background: linear-gradient(90deg, #fff, #ff8aa0, #fff);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: nxRainbow 5s linear infinite;
+}
+
+.nx-promo-sub {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* button */
+.nx-promo-btn {
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background: linear-gradient(90deg, #ff1a3c, #ff1493, #8a2be2);
+  background-size: 200% 100%;
+  box-shadow: 0 8px 26px rgba(255, 26, 60, 0.55);
+  animation: nxRainbow 3s linear infinite, nxBtnBeat 1.8s ease-in-out infinite;
+  transition: transform 0.25s ease;
+}
+.nx-promo-btn svg { width: 18px; height: 18px; }
+.nx-promo-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: skewX(-20deg);
+  animation: nxSweep 2.6s ease-in-out infinite;
+}
+@keyframes nxBtnBeat {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
+.nx-promo:hover .nx-promo-btn { transform: scale(1.1); }
+.nx-promo:active { transform: scale(0.98); }
+
+/* phones */
+@media (max-width: 640px) {
+  .nx-promo { margin: 18px 4vw 4px; }
+  .nx-promo-in {
+    flex-direction: column;
+    text-align: center;
+    padding: 22px 18px;
+    gap: 14px;
+  }
+  .nx-promo-btn { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-promo, .nx-promo::before, .nx-promo::after, .nx-sweep, .nx-spark,
+  .nx-promo-icon, .nx-promo-badge, .nx-promo-title, .nx-promo-btn,
+  .nx-promo-btn::after { animation: none; }
+}
