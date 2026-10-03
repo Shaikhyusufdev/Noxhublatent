@@ -57,6 +57,13 @@
   <style>
     /* upar wale banner ki hi classes use ho rahi hain (nx-promo, nx-spark, nx-sweep),
        isliye animation / glow / border wahi aayega. Yahan sirf height aur text hai. */
+    /* ===== BANNER HEIGHT: sirf yahi value badalni hai =====
+       Trending ke neeche wale video card jitni height rakhi hai.
+       Kam / zyada karna ho to --nx3-h badlo. */
+    .nx3{
+      --nx3-h:230px;
+    }
+
     .nx3 .nx-promo-in{
       position:relative;
       overflow:hidden;
@@ -64,17 +71,21 @@
       align-items:center;
       justify-content:space-between;
       gap:14px;
-      min-height:130px;
-      padding:20px 22px;
+      height:var(--nx3-h);
+      min-height:var(--nx3-h);
+      padding:18px 22px;
     }
 
     .nx3-logo{
       position:relative;
       z-index:2;
-      height:80px;
-      max-width:62%;
+      height:calc(var(--nx3-h) - 36px);
+      width:auto;
+      max-width:64%;
       object-fit:contain;
+      object-position:left center;
       display:block;
+      border-radius:10px;
       filter:drop-shadow(0 0 14px rgba(255,46,99,.45));
     }
 
@@ -108,8 +119,9 @@
     }
 
     @media (max-width:480px){
-      .nx3 .nx-promo-in{min-height:115px;padding:16px 14px}
-      .nx3-logo{height:62px}
+      .nx3{--nx3-h:200px}
+      .nx3 .nx-promo-in{padding:14px 12px}
+      .nx3-logo{max-width:66%}
     }
 
     @media (prefers-reduced-motion:reduce){
