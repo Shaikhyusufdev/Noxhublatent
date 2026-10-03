@@ -53,70 +53,74 @@
     </div>
   </a>
 
-  <!-- ===== NEW: NOXFLIX logo banner (promo banner ke neeche) ===== -->
+  <!-- ===== NEW: NOXFLIX text banner (upar wale banner jaisa effect, zyada height) ===== -->
   <style>
-    .nx2-banner{
+    /* upar wale banner ki hi classes use ho rahi hain (nx-promo, nx-spark, nx-sweep),
+       isliye animation / glow / border wahi aayega. Yahan sirf height aur text hai. */
+    .nx3 .nx-promo-in{
+      position:relative;
+      overflow:hidden;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:14px;
-      margin:12px 8px;
-      padding:12px 14px;
-      border-radius:14px;
-      text-decoration:none;
-      color:#fff;
-      background:linear-gradient(120deg,rgba(255,46,99,.14),rgba(10,6,16,.9) 60%);
-      border:1px solid rgba(255,46,99,.35);
-      box-shadow:0 8px 28px rgba(255,46,99,.12);
-      transition:transform .2s ease,box-shadow .2s ease;
+      min-height:130px;
+      padding:20px 22px;
     }
-    .nx2-banner:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,46,99,.22)}
-    .nx2-banner:active{transform:scale(.98)}
 
-    .nx2-logo{
-      height:52px;
-      max-width:62%;
-      object-fit:contain;
-      display:block;
-    }
-    .nx2-fallback{
-      font-size:24px;
+    .nx3-title{
+      position:relative;
+      z-index:2;
+      margin:0;
+      font-family:"Poppins","Arial Black",Arial,sans-serif;
+      font-size:clamp(34px,9vw,58px);
       font-weight:900;
-      letter-spacing:.5px;
+      line-height:1;
+      letter-spacing:2px;
+      background:linear-gradient(100deg,#ffffff 0%,#ffb3c6 45%,#ff2e63 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      color:transparent;
+      filter:drop-shadow(0 0 14px rgba(255,46,99,.45));
+      animation:nx3Glow 2.4s ease-in-out infinite;
     }
 
-    .nx2-btn{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:11px 20px;
-      border-radius:999px;
-      background:linear-gradient(135deg,#ff2e63,#c2185b);
-      font-size:14px;
-      font-weight:800;
-      white-space:nowrap;
-      box-shadow:0 6px 18px rgba(255,46,99,.35);
+    @keyframes nx3Glow{
+      0%,100%{filter:drop-shadow(0 0 10px rgba(255,46,99,.35))}
+      50%{filter:drop-shadow(0 0 22px rgba(255,46,99,.75))}
     }
-    .nx2-btn svg{width:16px;height:16px;fill:#fff}
+
+    .nx3 .nx-promo-btn{
+      position:relative;
+      z-index:2;
+      flex-shrink:0;
+    }
 
     @media (max-width:480px){
-      .nx2-logo{height:40px}
-      .nx2-fallback{font-size:20px}
-      .nx2-btn{padding:10px 16px;font-size:13px}
+      .nx3 .nx-promo-in{min-height:115px;padding:16px 14px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      .nx3-title{animation:none}
     }
   </style>
 
-  <a class="nx2-banner" href="https://apknox.online/NOXSTREAM/site/index.php" target="_blank" rel="noopener">
-    <!-- Logo ko apni site ke folder me upload karke yahan uska path likho -->
-    <img class="nx2-logo"
-         alt="NOXFLIX"
-         src="img/noxflix-logo.png"
-         onerror="this.outerHTML='<span class=&quot;nx2-fallback&quot;>NOXFLIX</span>'">
+  <a class="nx-promo nx3" href="https://apknox.online/NOXSTREAM/site/index.php" target="_blank" rel="noopener">
+    <div class="nx-promo-in">
+      <span class="nx-spark nx-s1"></span>
+      <span class="nx-spark nx-s2"></span>
+      <span class="nx-spark nx-s3"></span>
+      <span class="nx-spark nx-s4"></span>
+      <span class="nx-sweep"></span>
 
-    <span class="nx2-btn">
-      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      Watch Now
-    </span>
+      <h2 class="nx3-title">NOXFLIX</h2>
+
+      <span class="nx-promo-btn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span>Watch Now</span>
+      </span>
+    </div>
   </a>
   <!-- ===== /NEW banner ===== -->
 
