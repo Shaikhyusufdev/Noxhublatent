@@ -85,8 +85,66 @@
       object-fit:contain;
       object-position:left center;
       display:block;
+      flex:0 1 auto;
+      min-width:0;
       border-radius:10px;
       filter:drop-shadow(0 0 14px rgba(255,46,99,.45));
+    }
+
+    /* ===== ANIMATED ARROWS  >>>>  ===== */
+    .nx3-arrows{
+      position:relative;
+      z-index:2;
+      flex:1 1 0;
+      min-width:56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
+      overflow:hidden;
+    }
+
+    .nx3-arrows i{
+      display:block;
+      flex-shrink:0;
+      width:18px;
+      height:18px;
+      margin-left:-4px;
+      border-top:5px solid #ff2e63;
+      border-right:5px solid #ff2e63;
+      border-radius:2px;
+      transform:rotate(45deg) scale(.8);
+      opacity:.12;
+      animation:nx3Chev 1.6s ease-in-out infinite;
+    }
+
+    .nx3-arrows i:nth-child(1){animation-delay:0s}
+    .nx3-arrows i:nth-child(2){animation-delay:.14s}
+    .nx3-arrows i:nth-child(3){animation-delay:.28s}
+    .nx3-arrows i:nth-child(4){animation-delay:.42s}
+    .nx3-arrows i:nth-child(5){animation-delay:.56s}
+    .nx3-arrows i:nth-child(6){animation-delay:.70s}
+    .nx3-arrows i:nth-child(7){animation-delay:.84s}
+
+    @keyframes nx3Chev{
+      0%,100%{
+        opacity:.12;
+        transform:rotate(45deg) scale(.8);
+        border-color:#ff2e63;
+        filter:none;
+      }
+      35%{
+        opacity:1;
+        transform:rotate(45deg) scale(1.12);
+        border-color:#ffd1dc;
+        filter:drop-shadow(0 0 8px #ff2e63) drop-shadow(0 0 16px #ff2e63);
+      }
+      65%{
+        opacity:.35;
+        transform:rotate(45deg) scale(.9);
+        border-color:#ff2e63;
+        filter:none;
+      }
     }
 
     .nx3-title{
@@ -122,10 +180,14 @@
       .nx3{--nx3-h:200px}
       .nx3 .nx-promo-in{padding:14px 12px}
       .nx3-logo{max-width:66%}
+      .nx3-arrows{min-width:44px;gap:0}
+      .nx3-arrows i{width:12px;height:12px;border-width:4px;margin-left:-3px}
+      .nx3-arrows i:nth-child(n+5){display:none}
     }
 
     @media (prefers-reduced-motion:reduce){
       .nx3-title{animation:none}
+      .nx3-arrows i{animation:none;opacity:.8}
     }
   </style>
 
@@ -139,6 +201,11 @@
 
       <img class="nx3-logo" src="img/noxflix-logo.png" alt="NOXFLIX"
            onerror="this.outerHTML='<h2 class=&quot;nx3-title&quot;>NOXFLIX</h2>'">
+
+      <!-- animated >>>> arrows (image se Watch Now tak) -->
+      <span class="nx3-arrows" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </span>
 
       <span class="nx-promo-btn">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
