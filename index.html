@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoxFilx - Discover Movies, Series & Anime</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    /* RESET & BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    :root {
+      --bg-dark: #07070a;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg-hover: rgba(255, 255, 255, 0.09);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-highlight: rgba(255, 255, 255, 0.25);
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --accent-purple: #9333ea;
+      --accent-orange: #ea580c;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.6;
+      position: relative;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* BACKGROUND AMBIENT GLOW ORBS (FOR GLASS EFFECT) */
+    .bg-orbs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.38;
+      animation: floatOrb 12s infinite alternate ease-in-out;
+    }
+
+    .orb-1 {
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, #7928ca, #ff0080);
+      top: 5%;
+      left: -10%;
+    }
+
+    .orb-2 {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #f97316, #e11d48);
+      top: 45%;
+      right: -15%;
+      animation-duration: 16s;
+    }
+
+    .orb-3 {
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, #3b82f6, #8b5cf6);
+      bottom: 5%;
+      left: 20%;
+      animation-duration: 14s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translateY(0px) scale(1); }
+      100% { transform: translateY(40px) scale(1.1); }
+    }
+
+    /* GLASS CARD BASE */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.45);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-highlight);
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(7, 7, 10, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    /* LOGO: ONLY NoxFilx (NO NX ICON) */
+    .brand-logo {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      user-select: none;
+    }
+
+    .btn-pill-white {
+      background-color: #ffffff;
+      color: #000000;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-pill-white:hover {
+      background-color: #f1f5f9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      text-align: center;
+      padding: 70px 0 45px;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 40%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto 35px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .btn-glass-primary {
+      background: #ffffff;
+      color: #000000;
+      padding: 15px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-glass-primary:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+    }
+
+    .btn-glass-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 15px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-glass-secondary:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: var(--glass-highlight);
+      transform: translateY(-2px);
+    }
+
+    /* SHOWCASE SECTIONS (WITH USER IMAGES) */
+    .feature-showcase {
+      margin-bottom: 85px;
+      text-align: left;
+    }
+
+    .feature-showcase h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.6px;
+    }
+
+    .feature-showcase p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .glass-image-container {
+      position: relative;
+      border-radius: 28px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .glow-overlay-purple {
+      position: absolute;
+      top: -30%;
+      left: 10%;
+      width: 80%;
+      height: 70%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .glow-overlay-orange {
+      position: absolute;
+      top: -30%;
+      left: 10%;
+      width: 80%;
+      height: 70%;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.45) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .app-screen-img {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      border-radius: 18px;
+      display: block;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* FEATURE CARDS LIST (FOCUSED PLAYBACK ETC) */
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 85px;
+    }
+
+    .info-card {
+      padding: 26px 24px;
+    }
+
+    .info-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-card h3 i {
+      font-size: 17px;
+      color: #c084fc;
+    }
+
+    .info-card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* DOWNLOAD SECTION */
+    .download-section {
+      text-align: center;
+      margin-bottom: 90px;
+    }
+
+    .download-section h2 {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .download-section .subtext {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 30px;
+    }
+
+    .download-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .dl-card {
+      border-radius: 28px;
+      padding: 30px 24px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dl-mobile {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.45) 0%, rgba(99, 102, 241, 0.25) 100%), var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      box-shadow: 0 10px 35px rgba(124, 58, 237, 0.25);
+    }
+
+    .dl-tv {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.45) 0%, rgba(234, 88, 12, 0.25) 100%), var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      box-shadow: 0 10px 35px rgba(249, 115, 22, 0.25);
+    }
+
+    .badge-popular {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      width: fit-content;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dl-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .dl-icon-box {
+      width: 52px;
+      height: 52px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .dl-title-group h3 {
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .dl-title-group span {
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .dl-card p {
+      font-size: 14px;
+      color: #f1f5f9;
+      line-height: 1.5;
+    }
+
+    .dl-btn {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      width: 100%;
+      padding: 15px;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      display: block;
+    }
+
+    .dl-btn:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+    }
+
+    /* FAQ SECTION */
+    .faq-section {
+      margin-bottom: 85px;
+    }
+
+    .faq-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .faq-header h2 {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .faq-header p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--glass-border);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #ffffff;
+      padding: 22px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .faq-question:hover {
+      color: #c084fc;
+    }
+
+    .faq-icon {
+      font-size: 20px;
+      font-weight: 300;
+      transition: transform 0.3s ease;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      padding-left: 4px;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 250px;
+      padding-bottom: 20px;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45px);
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 50px 0 30px;
+      background: rgba(7, 7, 10, 0.7);
+      backdrop-filter: blur(15px);
+    }
+
+    .footer-brand {
+      margin-bottom: 35px;
+    }
+
+    .footer-brand p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .footer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .footer-col h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col a {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: #fff;
+    }
+
+    .copyright {
+      text-align: center;
+      color: #52525b;
+      font-size: 13px;
+      padding-top: 25px;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    /* SCROLL ANIMATION (FADE-IN) */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* DOWNLOAD TOAST */
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(24, 24, 32, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: #fff;
+      border: 1px solid var(--glass-border);
+      padding: 14px 26px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND AMBIENT GLOW ORBS -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">
+    <i class="fa-solid fa-circle-down" style="color: #4ade80; font-size: 16px;"></i>
+    <span id="toast-msg">Starting download...</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="brand-logo">NoxFilx</div>
+    <button class="btn-pill-white" onclick="scrollToDownload()">Get App Free</button>
+  </nav>
+
+  <main class="container">
+    
+    <!-- HERO SECTION -->
+    <section class="hero fade-in">
+      <h1 class="hero-title">Watch movies, series & anime in NOXFLIX APP OR WEBSITE.</h1>
+      <p class="hero-desc">
+        DOWNLOAD APP OR VISIT OUR WEBSITE TO START WATCHING.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-glass-primary" onclick="scrollToDownload()">Download APK</button>
+        <button class="btn-glass-secondary" onclick="window.open('https://apknox.online/NOXSTREAM/site/index.php')">WATCH ON WEBSITE</button>
+      </div>
+    </section>
+
+    <!-- FEATURE 1: BROWSE WITH EASE (IMAGE 1) -->
+    <section id="features" class="feature-showcase fade-in">
+      <h2>Browse with Ease</h2>
+      <p>
+        Enjoy a clean, intuitive layout to browse genres, recommendations, and recently updated catalog entries.
+      </p>
+      
+      <div class="glass-image-container">
+        <div class="glow-overlay-purple"></div>
+        <!-- USER REFERENCE IMAGE 1 -->
+        <img src="images/image1.png" alt="NoxFilx Browse UI" class="app-screen-img" onerror="this.src='https://placehold.co/480x600/121217/ffffff?text=Place+image1.png+in+images+folder';" />
+      </div>
+    </section>
+
+    <!-- FEATURE 2: LIGHTNING SEARCH (IMAGE 2) -->
+    <section class="feature-showcase fade-in">
+      <h2>Lightning Search</h2>
+      <p>
+        Search the available catalog by title, genre, or format with lightning speed.
+      </p>
+
+      <div class="glass-image-container">
+        <div class="glow-overlay-orange"></div>
+        <!-- USER REFERENCE IMAGE 2 -->
+        <img src="images/image2.png" alt="NoxFilx Search UI" class="app-screen-img" onerror="this.src='https://placehold.co/480x600/121217/ffffff?text=Place+image2.png+in+images+folder';" />
+      </div>
+    </section>
+
+    <!-- FEATURE HIGHLIGHTS (GLASS CARDS) -->
+    <section class="feature-list">
+      <div class="glass-card info-card fade-in">
+        <h3><i class="fa-solid fa-play"></i> Focused Playback</h3>
+        <p>Designed for uninterrupted viewing once playback begins with zero distractions.</p>
+      </div>
+
+      <div class="glass-card info-card fade-in">
+        <h3><i class="fa-solid fa-sliders"></i> High-Quality Playback</h3>
+        <p>Choose from multiple resolution qualities made available by selected sources and supported by your device.</p>
+      </div>
+
+      <div class="glass-card info-card fade-in">
+        <h3><i class="fa-solid fa-language"></i> Multiple Languages</h3>
+        <p>Dual-audio support means you can seamlessly switch between Subbed and Dubbed versions on the fly.</p>
+      </div>
+
+      <div class="glass-card info-card fade-in">
+        <h3><i class="fa-solid fa-cloud-arrow-down"></i> Offline Viewing</h3>
+        <p>Save supported media directly to your device storage when you want to watch offline on the go.</p>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD SECTION -->
+    <section id="download" class="download-section fade-in">
+      <h2>Get NoxFilx</h2>
+      <p class="subtext">Available for your phone and your living room.</p>
+
+      <div class="download-cards">
+        
+        <!-- MOBILE APK CARD -->
+        <div class="dl-card dl-mobile">
+          <div class="badge-popular">★ MOST POPULAR</div>
+          <div class="dl-header">
+            <div class="dl-icon-box">
+              <i class="fa-solid fa-mobile-screen"></i>
+            </div>
+            <div class="dl-title-group">
+              <h3>Mobile APK</h3>
+              <span>Version 5.0.2</span>
+            </div>
+          </div>
+          <p>The full NoxFilx experience optimized for Android smartphones and tablets.</p>
+          <!-- LINK TO file/noxflix.apk -->
+          <a href="file/noxflix.apk" download="noxflix.apk" class="dl-btn" onclick="showToast('Starting NoxFilx Mobile APK download...')">
+            Download for Mobile
+          </a>
+        </div>
+
+        <!-- TV APK CARD -->
+        <div class="dl-card dl-tv">
+          <div class="dl-header">
+            <div class="dl-icon-box">
+              <i class="fa-solid fa-tv"></i>
+            </div>
+            <div class="dl-title-group">
+              <h3>TV APK</h3>
+              <span>Version 3.0.2</span>
+            </div>
+          </div>
+          <p>Lean back and enjoy NoxFilx natively on Android TV, Google TV, and Firestick.</p>
+          <!-- LINK TO file/noxtv.apk -->
+          <a href="file/noxtv.apk" download="noxtv.apk" class="dl-btn" onclick="showToast('Starting NoxFilx TV APK download...')">
+            Download for TV
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="faq-section fade-in">
+      <div class="faq-header">
+        <h2>FAQ</h2>
+        <p>Everything you need to know about NoxFilx.</p>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>What is NoxFilx?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            NoxFilx is a modern entertainment discovery app built for Android devices that enables you to discover, manage, and view movies, TV series, and anime with clean Glass UI and high performance.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Is NoxFilx safe to use?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Yes, NoxFilx requires minimal permissions and does not contain invasive adware or malicious background trackers.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Is NoxFilx really free? No hidden charges?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Yes, NoxFilx is completely free to install and browse. There are no subscriptions, payment tiers, or hidden debit options.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>What devices does NoxFilx support?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            NoxFilx supports Android phones, tablets, Android TVs, Google TV devices, and Amazon Fire TV Stick.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>How does offline viewing work?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            You can tap the download button on any supported media title to save it directly to your device storage to watch later without internet.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Does NoxFilx have anime? Sub and Dub?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Yes, NoxFilx has a complete anime catalog with subbed and dubbed multi-audio support.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>How do I install NoxFilx on my Android device?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Download the APK from the buttons above, open your Downloads folder, tap the file, and allow 'Install Unknown Apps' in Android Settings if prompted.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-brand">
+        <div class="brand-logo" style="margin-bottom: 6px;">NoxFilx</div>
+        <p>Discover movies, series and anime in one app.</p>
+      </div>
+
+      <div class="footer-nav">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#download">Download</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Copyright & Takedown</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="https://t.me/" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="copyright">
+        &copy; 2026 NoxFilx. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT: INTERACTIONS & ANIMATIONS -->
+  <script>
+    // Smooth scroll helper
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function scrollToDownload() {
+      scrollToSection('download');
+    }
+
+    // FAQ Accordion
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const isActive = item.classList.contains('active');
+        
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // Toast popup when downloading APK
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.innerText = msg;
+      
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    // Scroll reveal animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
