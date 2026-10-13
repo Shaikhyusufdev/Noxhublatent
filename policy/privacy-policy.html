@@ -1,0 +1,1002 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070a12">
+
+  <title>Privacy Policy & Copyright | NOXHUB</title>
+
+  <meta name="description"
+    content="Read the NOXHUB Privacy Policy, Third-Party Content Disclaimer, Copyright Notice, and Content Removal Policy.">
+
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nox4clip.in/privacy-policy.html">
+
+  <style>
+    :root {
+      --bg: #070a12;
+      --panel: rgba(18, 24, 39, 0.78);
+      --border: rgba(115, 135, 180, 0.19);
+      --text: #eef2ff;
+      --muted: #9aa7bd;
+      --cyan: #25e4ee;
+      --purple: #9c72ff;
+      --pink: #ff4f9a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 95px;
+    }
+
+    body {
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: var(--cyan);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    a:hover {
+      color: white;
+    }
+
+    /* Animated background */
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 15% 5%,
+          rgba(37, 228, 238, 0.09), transparent 40%),
+        radial-gradient(ellipse at 85% 45%,
+          rgba(156, 114, 255, 0.10), transparent 42%),
+        #070a12;
+    }
+
+    .orb {
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.18;
+      animation: float 14s ease-in-out infinite alternate;
+    }
+
+    .orb.one {
+      background: var(--cyan);
+      top: 5%;
+      left: -180px;
+    }
+
+    .orb.two {
+      background: var(--purple);
+      right: -180px;
+      top: 45%;
+      animation-delay: -5s;
+    }
+
+    .orb.three {
+      background: var(--pink);
+      left: 35%;
+      bottom: -260px;
+      animation-delay: -8s;
+    }
+
+    @keyframes float {
+      from {
+        transform: translate(0, 0) scale(1);
+      }
+      to {
+        transform: translate(55px, -45px) scale(1.18);
+      }
+    }
+
+    /* Header */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(7, 10, 18, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      max-width: 1150px;
+      margin: auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .logo {
+      color: white;
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: var(--cyan);
+      text-shadow: 0 0 22px rgba(37, 228, 238, 0.35);
+    }
+
+    .nav a:last-child {
+      border: 1px solid var(--border);
+      padding: 8px 15px;
+      border-radius: 12px;
+      font-size: 13px;
+      transition: 0.3s;
+    }
+
+    .nav a:last-child:hover {
+      border-color: var(--cyan);
+      background: rgba(37, 228, 238, 0.08);
+    }
+
+    /* Hero */
+
+    .hero {
+      max-width: 950px;
+      margin: auto;
+      padding: 85px 24px 45px;
+      text-align: center;
+      animation: enter 0.8s ease both;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      border: 1px solid rgba(37, 228, 238, 0.3);
+      background: rgba(37, 228, 238, 0.07);
+      border-radius: 50px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .badge i {
+      width: 7px;
+      height: 7px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    h1 {
+      margin-top: 24px;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1.12;
+      letter-spacing: -2px;
+    }
+
+    h1 span {
+      background: linear-gradient(
+        100deg, var(--cyan), #b4a0ff, var(--pink)
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .updated {
+      margin-top: 25px;
+      color: #c2cce0;
+      font-size: 13px;
+    }
+
+    /* Layout */
+
+    .layout {
+      max-width: 1150px;
+      margin: auto;
+      padding: 20px 24px 85px;
+      display: grid;
+      grid-template-columns: 245px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 100px;
+      padding: 22px 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+    }
+
+    .sidebar h3 {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 0 10px 15px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 9px;
+      color: #b9c5d9;
+      font-size: 13px;
+      margin-bottom: 4px;
+      transition: 0.25s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: var(--cyan);
+      background: rgba(37, 228, 238, 0.08);
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .policy-card {
+      padding: 27px;
+      margin-bottom: 18px;
+      background: linear-gradient(
+        140deg,
+        rgba(22, 29, 47, 0.82),
+        rgba(12, 16, 29, 0.90)
+      );
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: border-color 0.3s, transform 0.3s;
+      animation: enter 0.65s ease both;
+    }
+
+    .policy-card:hover {
+      border-color: rgba(37, 228, 238, 0.38);
+      transform: translateY(-2px);
+    }
+
+    .policy-card h2 {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 16px;
+      font-size: 21px;
+      line-height: 1.45;
+    }
+
+    .number {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      color: var(--cyan);
+      background: rgba(37, 228, 238, 0.09);
+      border: 1px solid rgba(37, 228, 238, 0.19);
+      font-size: 13px;
+    }
+
+    .policy-card p {
+      color: #bac4d7;
+      font-size: 14px;
+      margin: 12px 0;
+    }
+
+    .policy-card strong {
+      color: #f3f6ff;
+    }
+
+    .policy-card ul {
+      padding-left: 22px;
+      color: #bac4d7;
+      font-size: 14px;
+      margin: 12px 0;
+    }
+
+    .policy-card li {
+      padding: 4px 0;
+    }
+
+    .notice {
+      margin-top: 18px;
+      padding: 15px 17px;
+      border-left: 3px solid var(--cyan);
+      border-radius: 0 12px 12px 0;
+      background: rgba(37, 228, 238, 0.055);
+      color: #c9d8e8;
+      font-size: 13px;
+    }
+
+    .contact-box {
+      margin-top: 17px;
+      padding: 20px;
+      border: 1px solid rgba(156, 114, 255, 0.25);
+      border-radius: 15px;
+      background: rgba(156, 114, 255, 0.06);
+    }
+
+    .contact-box p {
+      margin: 6px 0;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 10px 17px;
+      border-radius: 10px;
+      background: linear-gradient(100deg, #17bfcf, #7f6cff);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      transition: 0.25s;
+    }
+
+    .contact-link:hover {
+      color: white;
+      box-shadow: 0 0 25px rgba(37, 228, 238, 0.22);
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 35px 20px;
+      background: rgba(7, 10, 18, 0.65);
+    }
+
+    footer .logo {
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 6px 0;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin: 17px 0;
+      font-size: 13px;
+    }
+
+    /* Scroll progress */
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+      box-shadow: 0 0 12px rgba(37, 228, 238, 0.6);
+    }
+
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .sidebar {
+        position: static;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding: 12px;
+        white-space: nowrap;
+      }
+
+      .sidebar h3 {
+        display: none;
+      }
+
+      .sidebar a {
+        flex-shrink: 0;
+        margin: 0;
+      }
+
+      .hero {
+        padding-top: 60px;
+      }
+
+      .policy-card {
+        padding: 22px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav {
+        padding: 13px 17px;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+
+      .hero {
+        padding: 52px 18px 30px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .layout {
+        padding: 15px 14px 55px;
+      }
+
+      .policy-card {
+        padding: 18px;
+        border-radius: 16px;
+      }
+
+      .policy-card h2 {
+        font-size: 18px;
+        gap: 10px;
+      }
+
+      .policy-card p,
+      .policy-card ul {
+        font-size: 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress" id="progress"></div>
+
+  <div class="background" aria-hidden="true">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+  </div>
+
+  <header>
+    <nav class="nav">
+      <a class="logo" href="https://nox4clip.in/">
+        NOX<span>HUB</span>
+      </a>
+
+      <a href="https://nox4clip.in/">Back to Website ↗</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="badge">
+      <i></i>
+      Transparency & Trust
+    </div>
+
+    <h1>
+      Privacy &<br>
+      <span>Copyright Policy</span>
+    </h1>
+
+    <p>
+      Learn how NOXHUB handles privacy, third-party resources,
+      intellectual property concerns, and content removal requests.
+    </p>
+
+    <div class="updated">
+      Effective Date: October 13, 2026
+    </div>
+  </section>
+
+  <main class="layout">
+
+    <aside class="sidebar" aria-label="Policy navigation">
+      <h3>On this page</h3>
+      <a href="#introduction">Introduction</a>
+      <a href="#platform">Platform</a>
+      <a href="#third-party">Third-Party Content</a>
+      <a href="#copyright">Copyright</a>
+      <a href="#removal">Content Removal</a>
+      <a href="#users">User Responsibilities</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#cookies">Cookies</a>
+      <a href="#security">Data Security</a>
+      <a href="#children">Children's Privacy</a>
+      <a href="#limitations">Legal Limitations</a>
+      <a href="#changes">Policy Changes</a>
+      <a href="#contact">Contact</a>
+    </aside>
+
+    <div class="content">
+
+      <section class="policy-card" id="introduction">
+        <h2><span class="number">01</span> Introduction</h2>
+
+        <p>
+          Welcome to NOXHUB, accessible at
+          <a href="https://nox4clip.in/">nox4clip.in</a>.
+          In this policy, "we", "our", and "us" refer to the
+          NOXHUB platform.
+        </p>
+
+        <p>
+          We respect user privacy, intellectual property rights,
+          and applicable laws. This document explains our approach
+          to information collection, third-party resources,
+          copyright complaints, and content removal requests.
+        </p>
+
+        <p>
+          By using our website, you agree to use it in accordance
+          with applicable laws and the terms described in this policy.
+        </p>
+      </section>
+
+      <section class="policy-card" id="platform">
+        <h2><span class="number">02</span> Nature of Our Platform</h2>
+
+        <p>
+          NOXHUB may provide content discovery, indexing, information,
+          external links, and embedded media supplied by third-party
+          websites or service providers.
+        </p>
+
+        <p>
+          Where applicable, our role is limited to facilitating access
+          to third-party resources. Content that is hosted entirely
+          by an external provider may remain on that provider's
+          infrastructure rather than our own servers.
+        </p>
+
+        <p>
+          Our role depends on the actual technical arrangements and
+          the services provided in each case. We do not represent that
+          every linked or embedded item is authorized merely because
+          it is accessible through our platform.
+        </p>
+
+        <div class="notice">
+          We aim to distinguish between resources controlled by
+          NOXHUB and resources hosted or controlled independently
+          by third-party providers.
+        </div>
+      </section>
+
+      <section class="policy-card" id="third-party">
+        <h2><span class="number">03</span> Third-Party Content</h2>
+
+        <p>
+          Some links, video players, embeds, thumbnails, metadata,
+          and other resources may originate from external websites
+          or independent service providers.
+        </p>
+
+        <p>
+          These services may have their own terms of use, privacy
+          policies, content rules, and removal procedures. Their
+          operation and availability may be outside our control.
+        </p>
+
+        <p>
+          We do not claim ownership of third-party material unless
+          expressly stated. Trademarks, logos, images, video content,
+          and other protected works belong to their respective
+          rights holders.
+        </p>
+
+        <p>
+          External links should not be understood as an endorsement
+          or confirmation that the linked content is lawful,
+          licensed, or permanently available.
+        </p>
+      </section>
+
+      <section class="policy-card" id="copyright">
+        <h2><span class="number">04</span> Copyright & Intellectual Property</h2>
+
+        <p>
+          NOXHUB respects the rights of copyright owners and expects
+          users and content providers to comply with applicable
+          intellectual property laws.
+        </p>
+
+        <p>
+          Nothing in this policy authorizes unauthorized copying,
+          distribution, public communication, or circumvention of
+          technical access restrictions.
+        </p>
+
+        <p>
+          If you believe that material accessible through our website
+          infringes your copyright or other intellectual property
+          rights, please contact us with the information requested
+          in our content removal procedure.
+        </p>
+
+        <p>
+          We will review complaints in good faith and take appropriate
+          steps where warranted by the available information and
+          applicable law. These steps may include disabling access
+          to a link, removing material under our control, or contacting
+          the relevant third-party provider.
+        </p>
+      </section>
+
+      <section class="policy-card" id="removal">
+        <h2><span class="number">05</span> Copyright Complaints & Removal</h2>
+
+        <p>
+          Copyright owners or their authorized representatives may
+          submit a complaint by email. Please include the following
+          details to help us review the request:
+        </p>
+
+        <ul>
+          <li>Your name and contact information.</li>
+          <li>Identification of the copyrighted work.</li>
+          <li>The exact URL on NOXHUB where the material appears.</li>
+          <li>The external content URL, if available.</li>
+          <li>Evidence of ownership or authorization to represent the owner.</li>
+          <li>A description of the alleged infringement and a statement
+              that the information supplied is accurate to the best
+              of your knowledge.</li>
+        </ul>
+
+        <p>
+          Send copyright and content removal requests to:
+          <a href="mailto:noxhub.in@gmail.com">
+            noxhub.in@gmail.com
+          </a>
+        </p>
+
+        <p>
+          We will review sufficiently detailed complaints and respond
+          within a reasonable period, subject to applicable law and
+          the information provided. Additional details may be
+          requested when necessary.
+        </p>
+
+        <p>
+          Where appropriate, access may be restricted while a
+          complaint is reviewed. If a file is controlled by a
+          third-party provider, the complaint may also need to be
+          submitted to that provider.
+        </p>
+
+        <p>
+          A complaint does not automatically establish infringement.
+          We assess requests based on the information available and
+          applicable requirements.
+        </p>
+      </section>
+
+      <section class="policy-card" id="users">
+        <h2><span class="number">06</span> User Responsibilities</h2>
+
+        <p>Users must not use NOXHUB to:</p>
+
+        <ul>
+          <li>Upload or distribute material without the required rights.</li>
+          <li>Submit unlawful or knowingly infringing resources.</li>
+          <li>Circumvent access restrictions or technical protection measures.</li>
+          <li>Violate applicable copyright, privacy, or other laws.</li>
+          <li>Misrepresent ownership or impersonate a rights holder.</li>
+        </ul>
+
+        <p>
+          Where reasonably necessary and permitted by law, we may
+          restrict access to content or services to address abuse,
+          legal complaints, or violations of applicable requirements.
+        </p>
+      </section>
+
+      <section class="policy-card" id="privacy">
+        <h2><span class="number">07</span> Privacy & Information Collection</h2>
+
+        <p>
+          Depending on how our website and its service providers
+          are configured, certain technical or usage information
+          may be collected.
+        </p>
+
+        <ul>
+          <li>IP address and basic browser or device information.</li>
+          <li>Pages visited and general usage information.</li>
+          <li>Information voluntarily provided in email communications.</li>
+          <li>Cookie or analytics data, where those technologies are enabled.</li>
+        </ul>
+
+        <p>
+          Such information may be used to operate and secure the
+          website, troubleshoot technical problems, respond to
+          requests, improve services, and comply with applicable
+          legal obligations.
+        </p>
+
+        <p>
+          Information is handled according to the actual services
+          in use, applicable law, and the purposes for which it
+          was collected.
+        </p>
+      </section>
+
+      <section class="policy-card" id="cookies">
+        <h2><span class="number">08</span> Cookies, Analytics & Advertising</h2>
+
+        <p>
+          Our website or its service providers may use cookies,
+          analytics tools, or advertising technologies where enabled.
+          These technologies may help maintain website functionality,
+          understand usage, measure performance, or display advertising.
+        </p>
+
+        <p>
+          Third-party providers may process information under their
+          own policies. You can review the relevant provider policies
+          and manage available browser or device settings.
+        </p>
+
+        <p>
+          The specific technologies used depend on the website's
+          current configuration.
+        </p>
+      </section>
+
+      <section class="policy-card" id="security">
+        <h2><span class="number">09</span> Data Security & Retention</h2>
+
+        <p>
+          We take reasonable measures appropriate to our operations
+          to protect personal information under our control from
+          unauthorized access, misuse, loss, or disclosure.
+        </p>
+
+        <p>
+          Information is retained for as long as reasonably necessary
+          for the purposes described in this policy, unless a longer
+          period is required or permitted by law.
+        </p>
+
+        <p>
+          No online service can guarantee absolute security, and
+          we cannot guarantee the security or availability of
+          independently operated third-party services.
+        </p>
+      </section>
+
+      <section class="policy-card" id="children">
+        <h2><span class="number">10</span> Children's Privacy</h2>
+
+        <p>
+          We do not intend to knowingly collect personal information
+          from children in a manner that violates applicable law.
+          If you believe that personal information has been submitted
+          inappropriately, please contact us for review.
+        </p>
+
+        <p>
+          Where required by applicable law, we will take appropriate
+          steps concerning the information under our control.
+        </p>
+      </section>
+
+      <section class="policy-card" id="limitations">
+        <h2><span class="number">11</span> Disclaimer & Legal Limitations</h2>
+
+        <p>
+          Third-party resources may change, become unavailable,
+          or be removed without notice. We do not guarantee the
+          accuracy, legality, availability, or continued accessibility
+          of material controlled by independent providers.
+        </p>
+
+        <p>
+          We will address substantiated concerns in accordance with
+          our actual role, the information available, and applicable
+          law.
+        </p>
+
+        <p>
+          Nothing in this policy excludes or limits liability,
+          duties, or rights that cannot lawfully be excluded
+          or limited.
+        </p>
+
+        <div class="notice">
+          This policy describes our intended practices. It does not
+          itself grant legal immunity, eliminate copyright obligations,
+          or prevent a lawful complaint or legal proceeding.
+        </div>
+      </section>
+
+      <section class="policy-card" id="changes">
+        <h2><span class="number">12</span> Changes to This Policy</h2>
+
+        <p>
+          We may update this policy to reflect changes in our
+          services, technical arrangements, or legal obligations.
+          Updated terms will be published on this page with a
+          revised effective date where appropriate.
+        </p>
+
+        <p>
+          We encourage users to review this page periodically.
+        </p>
+      </section>
+
+      <section class="policy-card" id="contact">
+        <h2><span class="number">13</span> Contact NOXHUB</h2>
+
+        <p>
+          For privacy questions, copyright complaints, or content
+          removal requests, please use the official contact details
+          below.
+        </p>
+
+        <div class="contact-box">
+          <p><strong>Platform:</strong> NOXHUB / NOXFLIX</p>
+
+          <p>
+            <strong>Website:</strong>
+            <a href="https://nox4clip.in/">
+              nox4clip.in
+            </a>
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            <a href="mailto:noxhub.in@gmail.com">
+              noxhub.in@gmail.com
+            </a>
+          </p>
+
+          <a class="contact-link"
+             href="mailto:noxhub.in@gmail.com?subject=Privacy%20or%20Copyright%20Request">
+            Contact Us ↗
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <a class="logo" href="https://nox4clip.in/">
+      NOX<span>HUB</span>
+    </a>
+
+    <p>Privacy. Transparency. Responsible Access.</p>
+
+    <div class="footer-links">
+      <a href="https://nox4clip.in/">Home</a>
+      <a href="#copyright">Copyright Policy</a>
+      <a href="#removal">Content Removal</a>
+      <a href="mailto:noxhub.in@gmail.com">Contact</a>
+    </div>
+
+    <p>
+      © <span id="year">2026</span> NOXHUB / NOXFLIX.
+      All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    // Scroll progress indicator
+    const progress = document.getElementById("progress");
+
+    function updateProgress() {
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+
+      const percent = scrollable > 0
+        ? (window.scrollY / scrollable) * 100
+        : 0;
+
+      progress.style.width = percent + "%";
+    }
+
+    window.addEventListener("scroll", updateProgress, {
+      passive: true
+    });
+
+    updateProgress();
+
+    // Current copyright year
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+    // Highlight the current policy section
+    const sections = document.querySelectorAll(
+      ".policy-card[id]"
+    );
+
+    const links = document.querySelectorAll(
+      ".sidebar a[href^='#']"
+    );
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              links.forEach(link => {
+                const active =
+                  link.getAttribute("href") ===
+                  "#" + entry.target.id;
+
+                link.classList.toggle("active", active);
+              });
+            }
+          });
+        },
+        {
+          rootMargin: "-20% 0px -65% 0px"
+        }
+      );
+
+      sections.forEach(section => observer.observe(section));
+    }
+  </script>
+</body>
+</html>
