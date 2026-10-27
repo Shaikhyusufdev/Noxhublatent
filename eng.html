@@ -1,139 +1,459 @@
- 
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>FIFA WORLD CUP 2026</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOX STREAM PRO</title>
 
-  gtag('config', 'G-FMP9REY96D');
-</script>
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.0/shaka-player.compiled.js"></script>
 
- 
-  
-  <body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg"></video>  
-  </div>  
-  
-  <script>  
-    document.addEventListener('DOMContentLoaded', async () => {  
-      shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
-        console.error('Browser not supported');  
-        return;  
-      }  
-  
-      const video = document.querySelector('video');  
-      const player = new shaka.Player();  
-      await player.attach(video);  
-  
-      const container = document.querySelector('.shaka-video-container');  
-      const ui = new shaka.ui.Overlay(player, container, video);  
-  
-      ui.configure({  
-        controlPanelElements: [  
-          'play_pause', 'time_and_duration', 'mute', 'volume',  
-          'spacer', 'language', 'captions', 'picture_in_picture',  
-          'quality', 'fullscreen'  
-        ],  
-        volumeBarColors: {  
-  base: 'rgba(0, 136, 255, 0.3)',  
-  level: 'rgb(0, 136, 255)'  
-},  
-seekBarColors: {
-  base: 'rgba(90, 0, 0, 0.3)',
-  buffered: 'rgba(120, 0, 0, 0.6)',
-  played: 'rgb(170, 0, 0)'
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-      });  
-  
-   
-      let drmConfig = {  
-        clearKeys: {  
-          "99ce7c4be7222f0c0760734bb1a7c726":
- "9c2f0502932c19e0ccd9c8acc5c7790e"  
-        }  
-      };  
-  
-      let streamUrl = "https://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/dwurwq3gqy/out/v1/cad9647fdbd64c08afb4ebfb1390768c/cenc.mpd";  
-  
-      player.configure({  
-        drm: drmConfig,  
-        streaming: {  
-          lowLatencyMode: true,  
-          bufferingGoal: 15,  
-          rebufferingGoal: 2,  
-          bufferBehind: 15,  
-          retryParameters: {  
-            timeout: 10000,  
-            maxAttempts: 5,  
-            baseDelay: 300,  
-            backoffFactor: 1.2  
-          },  
-          segmentRequestTimeout: 8000,  
-          segmentPrefetchLimit: 2,  
-          useNativeHlsOnSafari: true  
-        },  
-        manifest: {  
-          retryParameters: {  
-            timeout: 8000,  
-            maxAttempts: 3  
-          }  
-        }  
-      });  
-  
-      player.addEventListener('error', (event) => {  
-        console.error('Shaka Player Error:', event.detail);  
-      });  
-  
-      try {  
-        await player.load(streamUrl);  
-        console.log("Stream loaded successfully");  
-      } catch (error) {  
-        console.error('Load error:', error);  
-      }  
-    });  
-  </script>  
-  </body>  
-<script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+body {
+  background: #070707;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.player {
+  width: 100%;
+  max-width: 1100px;
+  background: #111;
+  border: 1px solid #292929;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 80px #000;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.logo span {
+  color: #e50914;
+}
+
+.badge {
+  font-size: 11px;
+  color: #aaa;
+  border: 1px solid #333;
+  padding: 7px 10px;
+  border-radius: 20px;
+}
+
+.screen {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(transparent, #0003);
+}
+
+.center.hidden {
+  display: none;
+}
+
+.big-play {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: none;
+  background: #e50914;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.info {
+  padding: 14px 18px;
+  color: #aaa;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.info.error {
+  color: #ff6868;
+}
+
+.progress {
+  padding: 0 18px;
+}
+
+input[type=range] {
+  accent-color: #e50914;
+  cursor: pointer;
+}
+
+#seek {
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 15px 18px;
+}
+
+button, select {
+  background: #222;
+  color: #fff;
+  border: 1px solid #383838;
+  border-radius: 7px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+button:hover, select:hover {
+  background: #333;
+}
+
+#volume {
+  width: 80px;
+}
+
+.time {
+  color: #bbb;
+  font-size: 12px;
+}
+
+.footer {
+  padding: 13px 18px;
+  color: #666;
+  border-top: 1px solid #292929;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+@media(max-width: 500px) {
+  .controls {
+    gap: 7px;
+    padding: 12px;
+  }
+
+  .big-play {
+    width: 60px;
+    height: 60px;
+  }
+
+  .header {
+    padding: 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="player">
+
+  <header class="header">
+    <div class="logo">NOX<span>STREAM</span></div>
+    <div class="badge" id="status">INITIALIZING</div>
+  </header>
+
+  <div class="screen" id="screen">
+    <video id="video" playsinline preload="metadata"></video>
+
+    <div class="center" id="center">
+      <button class="big-play" id="bigPlay">▶</button>
+    </div>
+  </div>
+
+  <div class="info" id="info">
+    Initializing streaming engine...
+  </div>
+
+  <div class="progress">
+    <input id="seek" type="range" min="0" max="100" value="0">
+  </div>
+
+  <div class="controls">
+    <button id="play">▶ Play</button>
+
+    <span class="time" id="time">00:00 / 00:00</span>
+
+    <button id="mute">🔊</button>
+
+    <input id="volume" type="range"
+           min="0" max="1" step="0.05" value="1">
+
+    <select id="quality">
+      <option value="auto">Auto Quality</option>
+    </select>
+
+    <button id="fullscreen">⛶ Fullscreen</button>
+  </div>
+
+  <footer class="footer">
+    NOX STREAM PRO · DASH ENGINE
+  </footer>
+
+</div>
+
+<script>
+"use strict";
+
+/*
+ * Replace this with the actual, reachable HTTPS MPD URL.
+ */
+const STREAM_URL = "https://jiotvmblive.cdn.jio.com/bpk-tv/Sony_Six_SD_MOB/WDVLive/index.mpd";
+
+const video = document.getElementById("video");
+const status = document.getElementById("status");
+const info = document.getElementById("info");
+const center = document.getElementById("center");
+const playButton = document.getElementById("play");
+const seek = document.getElementById("seek");
+const time = document.getElementById("time");
+const volume = document.getElementById("volume");
+const mute = document.getElementById("mute");
+const quality = document.getElementById("quality");
+
+let player = null;
+let isSeeking = false;
+
+function message(text, error = false) {
+  info.textContent = text;
+  info.className = error ? "info error" : "info";
+}
+
+function formatTime(value) {
+  if (!Number.isFinite(value) || value < 0) return "LIVE";
+
+  const hours = Math.floor(value / 3600);
+  const minutes = Math.floor((value % 3600) / 60);
+  const seconds = Math.floor(value % 60);
+
+  const mm = String(minutes).padStart(2, "0");
+  const ss = String(seconds).padStart(2, "0");
+
+  return hours
+    ? `${String(hours).padStart(2, "0")}:${mm}:${ss}`
+    : `${mm}:${ss}`;
+}
+
+async function initialize() {
+  if (!window.shaka) {
+    status.textContent = "ENGINE ERROR";
+    message("Shaka Player could not load. Check your internet connection.", true);
+    return;
+  }
+
+  shaka.polyfill.installAll();
+
+  if (!shaka.Player.isBrowserSupported()) {
+    status.textContent = "UNSUPPORTED";
+    message("This browser does not support the required playback features.", true);
+    return;
+  }
+
+  try {
+    player = new shaka.Player();
+    await player.attach(video);
+
+    player.addEventListener("error", event => {
+      const error = event.detail;
+
+      console.error("Shaka playback error:", error);
+
+      status.textContent = "PLAYBACK ERROR";
+
+      message(
+        `Error ${error.code}: ${error.message || "Stream playback failed"}. Check the MPD URL, network requests, authentication and CORS.`,
+        true
+      );
+    });
+
+    status.textContent = "LOADING";
+    message("Loading DASH manifest...");
+
+    await player.load(STREAM_URL);
+
+    status.textContent = "READY";
+    message("Stream loaded successfully. Press Play to start.");
+
+    populateQualities();
+
+  } catch (error) {
+    console.error("Player initialization error:", error);
+
+    status.textContent = "LOAD FAILED";
+
+    message(
+      `Unable to load stream. ${error.message || "Check URL, authentication, server access and CORS."}`,
+      true
+    );
+  }
+}
+
+function populateQualities() {
+  quality.replaceChildren();
+
+  const auto = document.createElement("option");
+  auto.value = "auto";
+  auto.textContent = "Auto Quality";
+  quality.appendChild(auto);
+
+  const tracks = player.getVariantTracks();
+  const seen = new Set();
+
+  tracks.forEach(track => {
+    if (!track.height) return;
+
+    const key = `${track.height}p`;
+
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    const option = document.createElement("option");
+    option.value = String(track.id);
+    option.textContent = key;
+
+    quality.appendChild(option);
+  });
+}
+
+async function togglePlayback() {
+  if (video.paused) {
+    try {
+      await video.play();
+    } catch (error) {
+      message(
+        "Playback could not start. Check stream access and try again.",
+        true
+      );
+    }
+  } else {
+    video.pause();
+  }
+}
+
+document.getElementById("bigPlay")
+  .addEventListener("click", togglePlayback);
+
+playButton.addEventListener("click", togglePlayback);
+
+video.addEventListener("playing", () => {
+  status.textContent = "PLAYING";
+  message("Enjoy your stream.");
+  center.classList.add("hidden");
+  playButton.textContent = "❚❚ Pause";
+});
+
+video.addEventListener("pause", () => {
+  center.classList.remove("hidden");
+  playButton.textContent = "▶ Play";
+});
+
+video.addEventListener("waiting", () => {
+  status.textContent = "BUFFERING";
+});
+
+video.addEventListener("timeupdate", () => {
+  if (!isSeeking) {
+    if (Number.isFinite(video.duration) && video.duration > 0) {
+      seek.value = (video.currentTime / video.duration) * 100;
+    }
+
+    time.textContent =
+      `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+  }
+});
+
+seek.addEventListener("input", () => {
+  isSeeking = true;
+});
+
+seek.addEventListener("change", () => {
+  if (Number.isFinite(video.duration) && video.duration > 0) {
+    video.currentTime =
+      (Number(seek.value) / 100) * video.duration;
+  }
+
+  isSeeking = false;
+});
+
+volume.addEventListener("input", () => {
+  video.volume = Number(volume.value);
+  video.muted = video.volume === 0;
+
+  mute.textContent = video.muted ? "🔇" : "🔊";
+});
+
+mute.addEventListener("click", () => {
+  video.muted = !video.muted;
+  mute.textContent = video.muted ? "🔇" : "🔊";
+});
+
+quality.addEventListener("change", () => {
+  if (!player) return;
+
+  if (quality.value === "auto") {
+    player.configure({ abr: { enabled: true } });
+    return;
+  }
+
+  const track = player.getVariantTracks().find(
+    item => item.id === Number(quality.value)
+  );
+
+  if (track) {
+    player.configure({ abr: { enabled: false } });
+    player.selectVariantTrack(track, true);
+  }
+});
+
+document.getElementById("fullscreen").addEventListener("click", async () => {
+  const screen = document.getElementById("screen");
+
+  try {
+    if (!document.fullscreenElement) {
+      await screen.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch (error) {
+    message("Fullscreen is not available in this browser.", true);
+  }
+});
+
+initialize();
+</script>
+
+</body>
 </html>
+```
