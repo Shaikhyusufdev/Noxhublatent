@@ -16,12 +16,13 @@
 }
 
 body {
-  background: #070707;
-  color: #fff;
+  background: #080808;
+  color: white;
   font-family: Arial, sans-serif;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 16px;
 }
 
@@ -39,11 +40,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 20px;
+  padding: 18px;
 }
 
 .logo {
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 900;
   letter-spacing: 2px;
 }
@@ -53,8 +54,8 @@ body {
 }
 
 .badge {
+  color: #bbb;
   font-size: 11px;
-  color: #aaa;
   border: 1px solid #333;
   padding: 7px 10px;
   border-radius: 20px;
@@ -62,37 +63,37 @@ body {
 
 .screen {
   position: relative;
-  aspect-ratio: 16/9;
   background: #000;
+  aspect-ratio: 16 / 9;
 }
 
 video {
   width: 100%;
   height: 100%;
-  display: block;
   object-fit: contain;
+  display: block;
 }
 
-.center {
+.overlay {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  background: linear-gradient(transparent, #0003);
+  background: #0003;
 }
 
-.center.hidden {
+.overlay.hidden {
   display: none;
 }
 
 .big-play {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
+  width: 72px;
+  height: 72px;
   border: none;
+  border-radius: 50%;
   background: #e50914;
-  color: #fff;
-  font-size: 30px;
+  color: white;
+  font-size: 28px;
   cursor: pointer;
 }
 
@@ -104,20 +105,16 @@ video {
 }
 
 .info.error {
-  color: #ff6868;
+  color: #ff6b6b;
 }
 
 .progress {
   padding: 0 18px;
 }
 
-input[type=range] {
-  accent-color: #e50914;
-  cursor: pointer;
-}
-
 #seek {
   width: 100%;
+  accent-color: #e50914;
 }
 
 .controls {
@@ -129,31 +126,35 @@ input[type=range] {
 }
 
 button, select {
+  padding: 10px 12px;
   background: #222;
-  color: #fff;
+  color: white;
   border: 1px solid #383838;
   border-radius: 7px;
-  padding: 10px 12px;
   cursor: pointer;
 }
 
-button:hover, select:hover {
+button:hover {
   background: #333;
 }
 
+input[type="range"] {
+  accent-color: #e50914;
+}
+
 #volume {
-  width: 80px;
+  width: 85px;
 }
 
 .time {
-  color: #bbb;
   font-size: 12px;
+  color: #bbb;
 }
 
 .footer {
-  padding: 13px 18px;
-  color: #666;
+  padding: 14px 18px;
   border-top: 1px solid #292929;
+  color: #666;
   font-size: 11px;
   letter-spacing: 1px;
 }
@@ -164,13 +165,13 @@ button:hover, select:hover {
     padding: 12px;
   }
 
-  .big-play {
-    width: 60px;
-    height: 60px;
-  }
-
   .header {
     padding: 14px;
+  }
+
+  .big-play {
+    width: 58px;
+    height: 58px;
   }
 }
 </style>
@@ -188,23 +189,24 @@ button:hover, select:hover {
   <div class="screen" id="screen">
     <video id="video" playsinline preload="metadata"></video>
 
-    <div class="center" id="center">
+    <div class="overlay" id="overlay">
       <button class="big-play" id="bigPlay">▶</button>
     </div>
   </div>
 
   <div class="info" id="info">
-    Initializing streaming engine...
+    Initializing player...
   </div>
 
   <div class="progress">
-    <input id="seek" type="range" min="0" max="100" value="0">
+    <input id="seek" type="range"
+           min="0" max="100" value="0">
   </div>
 
   <div class="controls">
     <button id="play">▶ Play</button>
 
-    <span class="time" id="time">00:00 / 00:00</span>
+    <span class="time" id="time">00:00 / LIVE</span>
 
     <button id="mute">🔊</button>
 
@@ -219,7 +221,7 @@ button:hover, select:hover {
   </div>
 
   <footer class="footer">
-    NOX STREAM PRO · DASH ENGINE
+    NOX STREAM PRO · DASH PLAYER
   </footer>
 
 </div>
@@ -227,15 +229,17 @@ button:hover, select:hover {
 <script>
 "use strict";
 
-/*
- * Replace this with the actual, reachable HTTPS MPD URL.
- */
-const STREAM_URL = "https://jiotvmblive.cdn.jio.com/bpk-tv/Sony_Six_SD_MOB/WDVLive/index.mpd";
+// Updated Sony Six SD DASH manifest
+const STREAM_URL =
+  "https://jiotvmblive.cdn.jio.com/bpk-tv/Sony_Six_SD_MOB/WDVLive/index.mpd";
+
+// Keep private authentication credentials on your authorized server.
+// Configure the server's supported authentication method there.
 
 const video = document.getElementById("video");
 const status = document.getElementById("status");
 const info = document.getElementById("info");
-const center = document.getElementById("center");
+const overlay = document.getElementById("overlay");
 const playButton = document.getElementById("play");
 const seek = document.getElementById("seek");
 const time = document.getElementById("time");
@@ -246,7 +250,7 @@ const quality = document.getElementById("quality");
 let player = null;
 let isSeeking = false;
 
-function message(text, error = false) {
+function setMessage(text, error = false) {
   info.textContent = text;
   info.className = error ? "info error" : "info";
 }
@@ -266,10 +270,10 @@ function formatTime(value) {
     : `${mm}:${ss}`;
 }
 
-async function initialize() {
+async function initializePlayer() {
   if (!window.shaka) {
     status.textContent = "ENGINE ERROR";
-    message("Shaka Player could not load. Check your internet connection.", true);
+    setMessage("Unable to load Shaka Player. Check your internet connection.", true);
     return;
   }
 
@@ -277,7 +281,7 @@ async function initialize() {
 
   if (!shaka.Player.isBrowserSupported()) {
     status.textContent = "UNSUPPORTED";
-    message("This browser does not support the required playback features.", true);
+    setMessage("This browser does not support the player.", true);
     return;
   }
 
@@ -288,33 +292,33 @@ async function initialize() {
     player.addEventListener("error", event => {
       const error = event.detail;
 
-      console.error("Shaka playback error:", error);
+      console.error("Shaka error:", error);
 
       status.textContent = "PLAYBACK ERROR";
 
-      message(
-        `Error ${error.code}: ${error.message || "Stream playback failed"}. Check the MPD URL, network requests, authentication and CORS.`,
+      setMessage(
+        `Error ${error.code}: ${error.message || "Playback failed"}. Check the manifest URL, authentication, CORS and server response.`,
         true
       );
     });
 
     status.textContent = "LOADING";
-    message("Loading DASH manifest...");
+    setMessage("Loading Sony Six SD stream...");
 
     await player.load(STREAM_URL);
 
     status.textContent = "READY";
-    message("Stream loaded successfully. Press Play to start.");
+    setMessage("Stream loaded. Press Play to start.");
 
     populateQualities();
 
   } catch (error) {
-    console.error("Player initialization error:", error);
+    console.error("Stream loading failed:", error);
 
     status.textContent = "LOAD FAILED";
 
-    message(
-      `Unable to load stream. ${error.message || "Check URL, authentication, server access and CORS."}`,
+    setMessage(
+      `Unable to load stream. ${error.message || "Check URL, authentication and server permissions."}`,
       true
     );
   }
@@ -323,25 +327,24 @@ async function initialize() {
 function populateQualities() {
   quality.replaceChildren();
 
-  const auto = document.createElement("option");
-  auto.value = "auto";
-  auto.textContent = "Auto Quality";
-  quality.appendChild(auto);
+  const autoOption = document.createElement("option");
+  autoOption.value = "auto";
+  autoOption.textContent = "Auto Quality";
+  quality.appendChild(autoOption);
 
-  const tracks = player.getVariantTracks();
   const seen = new Set();
 
-  tracks.forEach(track => {
+  player.getVariantTracks().forEach(track => {
     if (!track.height) return;
 
-    const key = `${track.height}p`;
+    const label = `${track.height}p`;
 
-    if (seen.has(key)) return;
-    seen.add(key);
+    if (seen.has(label)) return;
+    seen.add(label);
 
     const option = document.createElement("option");
     option.value = String(track.id);
-    option.textContent = key;
+    option.textContent = label;
 
     quality.appendChild(option);
   });
@@ -352,8 +355,8 @@ async function togglePlayback() {
     try {
       await video.play();
     } catch (error) {
-      message(
-        "Playback could not start. Check stream access and try again.",
+      setMessage(
+        "Playback failed. Check stream access and try again.",
         true
       );
     }
@@ -369,13 +372,13 @@ playButton.addEventListener("click", togglePlayback);
 
 video.addEventListener("playing", () => {
   status.textContent = "PLAYING";
-  message("Enjoy your stream.");
-  center.classList.add("hidden");
+  setMessage("Stream is playing.");
+  overlay.classList.add("hidden");
   playButton.textContent = "❚❚ Pause";
 });
 
 video.addEventListener("pause", () => {
-  center.classList.remove("hidden");
+  overlay.classList.remove("hidden");
   playButton.textContent = "▶ Play";
 });
 
@@ -410,7 +413,6 @@ seek.addEventListener("change", () => {
 volume.addEventListener("input", () => {
   video.volume = Number(volume.value);
   video.muted = video.volume === 0;
-
   mute.textContent = video.muted ? "🔇" : "🔊";
 });
 
@@ -447,11 +449,11 @@ document.getElementById("fullscreen").addEventListener("click", async () => {
       await document.exitFullscreen();
     }
   } catch (error) {
-    message("Fullscreen is not available in this browser.", true);
+    setMessage("Fullscreen is not available.", true);
   }
 });
 
-initialize();
+initializePlayer();
 </script>
 
 </body>
