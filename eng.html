@@ -1,459 +1,139 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-  <title>NOXHUB Player</title>
-
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      width: 100%;
-      min-height: 100%;
-      background: #080808;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
-
-    .header {
-      height: 60px;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      background: #111;
-      border-bottom: 1px solid #292929;
-    }
-
-    .logo {
-      font-size: 23px;
-      font-weight: 900;
-      letter-spacing: 1px;
-    }
-
-    .logo span {
-      color: #e50914;
-    }
-
-    .container {
-      width: min(1100px, 96%);
-      margin: 28px auto;
-    }
-
-    .heading {
-      margin-bottom: 15px;
-    }
-
-    .heading h1 {
-      font-size: 23px;
-      margin-bottom: 6px;
-    }
-
-    .heading p {
-      font-size: 13px;
-      color: #999;
-    }
-
-    .player {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      overflow: hidden;
-      border: 1px solid #292929;
-      border-radius: 10px;
-    }
-
-    video {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #000;
-    }
-
-    .shaka-video-container {
-      width: 100% !important;
-      height: 100% !important;
-      background: #000 !important;
-    }
-
-    .overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 13px;
-      padding: 24px;
-      text-align: center;
-      background: rgba(0, 0, 0, .92);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .spinner {
-      width: 38px;
-      height: 38px;
-      border: 4px solid #444;
-      border-top-color: #e50914;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .overlay h2 {
-      font-size: 20px;
-    }
-
-    .overlay p {
-      max-width: 500px;
-      color: #bbb;
-      font-size: 13px;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .button {
-      padding: 10px 20px;
-      border: 0;
-      border-radius: 5px;
-      background: #e50914;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .info {
-      margin-top: 16px;
-      padding: 17px;
-      background: #141414;
-      border: 1px solid #292929;
-      border-radius: 8px;
-    }
-
-    .info h2 {
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-
-    .info p {
-      color: #999;
-      font-size: 13px;
-      line-height: 1.7;
-      overflow-wrap: anywhere;
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      font-size: 12px;
-      color: #bbb;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: #888;
-    }
-
-    footer {
-      padding: 22px 10px;
-      margin-top: 35px;
-      border-top: 1px solid #252525;
-      color: #777;
-      font-size: 12px;
-      text-align: center;
-    }
-
-    @media (max-width: 600px) {
-      .header {
-        height: 54px;
-      }
-
-      .container {
-        width: 100%;
-        margin: 22px auto;
-      }
-
-      .heading {
-        padding: 0 12px;
-      }
-
-      .player {
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-      }
-
-      .info {
-        margin: 14px 12px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <header class="header">
-    <div class="logo">NOX<span>HUB</span></div>
-  </header>
-
-  <main class="container">
-
-    <section class="heading">
-      <h1>Live Player</h1>
-      <p>NOXHUB Streaming</p>
-    </section>
-
-    <section class="player" id="playerContainer">
-
-      <video
-        id="video"
-        playsinline
-        preload="metadata"
-        controls>
-      </video>
-
-      <div class="overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <p id="loadingText">Initializing player...</p>
-      </div>
-
-      <div class="overlay hidden" id="errorOverlay">
-        <h2>Unable to Play</h2>
-        <p id="errorText">
-          Check the stream URL and playback permissions.
-        </p>
-        <button class="button" id="retryButton">Retry</button>
-      </div>
-
-    </section>
-
-    <section class="info">
-      <h2>Playback Information</h2>
-      <p>
-        DASH playback requires a compatible browser and an accessible
-        media manifest. Protected streams may require authorization
-        and DRM configuration from the stream provider.
-      </p>
-
-      <div class="status">
-        <span class="dot" id="statusDot"></span>
-        <span id="statusText">Initializing</span>
-      </div>
-    </section>
-
-  </main>
-
-  <footer>
-    &copy; <span id="year"></span> NOXHUB
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
-
-  <script>
-    "use strict";
-
-    const CONFIG = {
-      // Replace with your authorized, accessible DASH manifest.
-      streamUrl: "https://jiotvmblive.cdn.jio.com/bpk-tv/Sony_Six_SD_MOB/WDVLive/index.mpd",
-
-      // Endpoint retained for configuration reference.
-      // This page does not fetch or apply third-party auth tokens.
-      cookieUrl: "https://allrounder2-0.pages.dev/api/Sony-3.json"
-    };
-
-    const video = document.getElementById("video");
-    const container = document.getElementById("playerContainer");
-    const loading = document.getElementById("loadingOverlay");
-    const loadingText = document.getElementById("loadingText");
-    const errorOverlay = document.getElementById("errorOverlay");
-    const errorText = document.getElementById("errorText");
-    const statusText = document.getElementById("statusText");
-    const statusDot = document.getElementById("statusDot");
-
-    let player;
-    let ui;
-    let loadingTimer;
-
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
-
-    function setStatus(message, color = "#888") {
-      statusText.textContent = message;
-      statusDot.style.background = color;
-    }
-
-    function showLoading(message) {
-      loadingText.textContent = message;
-      loading.classList.remove("hidden");
-      errorOverlay.classList.add("hidden");
-    }
-
-    function showError(message) {
-      clearTimeout(loadingTimer);
-      loading.classList.add("hidden");
-      errorOverlay.classList.remove("hidden");
-      errorText.textContent = message;
-      setStatus("Playback error", "#f87171");
-    }
-
-    function getErrorMessage(error) {
-      const code = error && error.code
-        ? error.code
-        : "Unknown";
-
-      const category = error && error.category
-        ? error.category
-        : "Unknown";
-
-      return "Playback failed. Shaka error code: " +
-        code + "; category: " + category +
-        ". Check the browser console and stream authorization.";
-    }
-
-    async function initializePlayer() {
-      showLoading("Loading DASH player...");
-      setStatus("Initializing", "#e5a000");
-
-      try {
-        shaka.polyfill.installAll();
-
-        if (!shaka.Player.isBrowserSupported()) {
-          throw new Error(
-            "This browser does not support the required playback features."
-          );
-        }
-
-        player = new shaka.Player();
-
-        player.addEventListener("error", event => {
-          const error = event.detail;
-          console.error("Shaka playback error:", error);
-          setStatus("Stream error: " + error.code, "#f87171");
-        });
-
-        await player.attach(video);
-
-        ui = new shaka.ui.Overlay(
-          player,
-          container,
-          video
-        );
-
-        ui.configure({
-          addBigPlayButton: true,
-          controlPanelElements: [
-            "play_pause",
-            "mute",
-            "volume",
-            "time_and_duration",
-            "spacer",
-            "quality",
-            "playback_rate",
-            "picture_in_picture",
-            "fullscreen"
-          ]
-        });
-
-        player.configure({
-          manifest: {
-            defaultPresentationDelay: 5
-          },
-          streaming: {
-            bufferingGoal: 10,
-            rebufferingGoal: 2
-          }
-        });
-
-        if (!CONFIG.streamUrl) {
-          throw new Error("No stream URL configured.");
-        }
-
-        showLoading("Loading stream...");
-        setStatus("Connecting", "#e5a000");
-
-        await player.load(CONFIG.streamUrl);
-
-        loading.classList.add("hidden");
-        setStatus("Stream loaded", "#22c55e");
-
-        video.addEventListener("playing", () => {
-          loading.classList.add("hidden");
-          setStatus("Playing", "#22c55e");
-        });
-
-        video.addEventListener("waiting", () => {
-          showLoading("Buffering...");
-          setStatus("Buffering", "#e5a000");
-        });
-
-        video.addEventListener("canplay", () => {
-          loading.classList.add("hidden");
-        });
-
-      } catch (error) {
-        console.error("Player initialization failed:", error);
-
-        if (error && error.code) {
-          showError(getErrorMessage(error));
-        } else {
-          showError(
-            error.message ||
-            "Player initialization failed. Check browser support and configuration."
-          );
-        }
-      }
-    }
-
-    document.getElementById("retryButton")
-      .addEventListener("click", async () => {
-        if (player) {
-          try {
-            showLoading("Retrying stream...");
-            setStatus("Retrying", "#e5a000");
-
-            await player.load(CONFIG.streamUrl);
-
-            loading.classList.add("hidden");
-            errorOverlay.classList.add("hidden");
-
-            setStatus("Stream loaded", "#22c55e");
-          } catch (error) {
-            console.error("Retry failed:", error);
-            showError(getErrorMessage(error));
-          }
-        } else {
-          initializePlayer();
-        }
-      });
-
-    initializePlayer();
-  </script>
-
-</body>
+ 
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>FIFA WORLD CUP 2026</title>     
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FMP9REY96D');
+</script>
+  <style>  
+   * { margin: 0; padding: 0; box-sizing: border-box; }  
+    html, body {  
+      background: #000;  
+      height: 100vh;  
+      width: 100vw;  
+      overflow: hidden;  
+      font-family: system-ui, -apple-system, sans-serif;  
+    }  
+    .shaka-video-container {  
+      position: absolute;  
+      inset: 0;  
+      width: 100%;  
+      height: 100%;  
+    }  
+    video {  
+      width: 100%;  
+      height: 100%;  
+      background: #000;  
+      object-fit: contain;  
+    }  
+    .shaka-spinner-container,  
+    .shaka-spinner,  
+    .shaka-spinner-svg {  
+      display: none !important;  
+      visibility: hidden !important;  
+      opacity: 0 !important;  
+    }  
+  </style>  
+</head>  
+
+ 
+  
+  <body>  
+  <div class="shaka-video-container" data-shaka-player>  
+    <video autoplay playsinline preload="metadata" poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg"></video>  
+  </div>  
+  
+  <script>  
+    document.addEventListener('DOMContentLoaded', async () => {  
+      shaka.polyfill.installAll();  
+  
+      if (!shaka.Player.isBrowserSupported()) {  
+        console.error('Browser not supported');  
+        return;  
+      }  
+  
+      const video = document.querySelector('video');  
+      const player = new shaka.Player();  
+      await player.attach(video);  
+  
+      const container = document.querySelector('.shaka-video-container');  
+      const ui = new shaka.ui.Overlay(player, container, video);  
+  
+      ui.configure({  
+        controlPanelElements: [  
+          'play_pause', 'time_and_duration', 'mute', 'volume',  
+          'spacer', 'language', 'captions', 'picture_in_picture',  
+          'quality', 'fullscreen'  
+        ],  
+        volumeBarColors: {  
+  base: 'rgba(0, 136, 255, 0.3)',  
+  level: 'rgb(0, 136, 255)'  
+},  
+seekBarColors: {
+  base: 'rgba(90, 0, 0, 0.3)',
+  buffered: 'rgba(120, 0, 0, 0.6)',
+  played: 'rgb(170, 0, 0)'
+}
+      });  
+  
+   
+      let drmConfig = {  
+        clearKeys: {  
+          "99ce7c4be7222f0c0760734bb1a7c726":
+ "9c2f0502932c19e0ccd9c8acc5c7790e"  
+        }  
+      };  
+  
+      let streamUrl = "https://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/dwurwq3gqy/out/v1/cad9647fdbd64c08afb4ebfb1390768c/cenc.mpd";  
+  
+      player.configure({  
+        drm: drmConfig,  
+        streaming: {  
+          lowLatencyMode: true,  
+          bufferingGoal: 15,  
+          rebufferingGoal: 2,  
+          bufferBehind: 15,  
+          retryParameters: {  
+            timeout: 10000,  
+            maxAttempts: 5,  
+            baseDelay: 300,  
+            backoffFactor: 1.2  
+          },  
+          segmentRequestTimeout: 8000,  
+          segmentPrefetchLimit: 2,  
+          useNativeHlsOnSafari: true  
+        },  
+        manifest: {  
+          retryParameters: {  
+            timeout: 8000,  
+            maxAttempts: 3  
+          }  
+        }  
+      });  
+  
+      player.addEventListener('error', (event) => {  
+        console.error('Shaka Player Error:', event.detail);  
+      });  
+  
+      try {  
+        await player.load(streamUrl);  
+        console.log("Stream loaded successfully");  
+      } catch (error) {  
+        console.error('Load error:', error);  
+      }  
+    });  
+  </script>  
+  </body>  
+<script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </html>
-```
