@@ -1,139 +1,250 @@
- 
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>FIFA WORLD CUP 2026</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOX HUB Player</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090909;color:#fff;font-family:Arial,sans-serif;
+display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px}
+.app{width:100%;max-width:1000px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.logo{font-size:25px;font-weight:800}.logo span{color:#e50914}
+.badge{background:#e50914;padding:6px 10px;border-radius:5px;font-size:12px}
+.player{background:#141414;border-radius:12px;overflow:hidden}
+.video-box{position:relative;background:#000;aspect-ratio:16/9}
+video{width:100%;height:100%;display:block;object-fit:contain}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+text-align:center;padding:20px;background:#0008;line-height:1.6}
+.overlay.hide{display:none}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px}
+button,select{background:#292929;color:#fff;border:1px solid #444;border-radius:6px;
+padding:10px;cursor:pointer}
+button:hover,select:hover{background:#404040}
+#play{background:#e50914;border-color:#e50914}
+.seekrow{display:flex;align-items:center;gap:10px;padding:0 13px 13px}
+#seek{flex:1;min-width:50px;accent-color:#e50914}
+input[type=range]{accent-color:#e50914}
+.time{font-size:12px;color:#bbb;white-space:nowrap}
+#volume{width:75px}
+.status{padding:12px 14px;color:#bbb;background:#101010;font-size:12px;
+overflow-wrap:anywhere}
+.error{color:#ff7777}
+@media(max-width:500px){.controls{gap:7px;padding:10px}
+button,select{padding:8px;font-size:12px}#volume{width:55px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+  <div class="logo">NOX <span>HUB</span></div>
+  <div class="badge">HLS PLAYER</div>
+</header>
+
+<section class="player">
+  <div class="video-box" id="videoBox">
+    <video id="video" playsinline controlslist="nodownload"></video>
+    <div class="overlay" id="overlay">
+      <div id="message">Connecting to stream...</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="play">▶ Play</button>
+    <select id="quality" aria-label="Video quality">
+      <option value="-1">Auto Quality</option>
+    </select>
+    <label class="time">Volume
+      <input type="range" id="volume" min="0" max="1" step=".05" value="1">
+    </label>
+    <button id="mute">Mute</button>
+    <button id="fullscreen">⛶ Fullscreen</button>
+  </div>
+
+  <div class="seekrow">
+    <span class="time" id="current">00:00</span>
+    <input type="range" id="seek" min="0" max="1000" value="0">
+    <span class="time" id="duration">LIVE</span>
+  </div>
+
+  <div class="status" id="status">Initializing player...</div>
+</section>
+</main>
+
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+const video = document.getElementById("video");
+const overlay = document.getElementById("overlay");
+const message = document.getElementById("message");
+const statusEl = document.getElementById("status");
+const qualitySelect = document.getElementById("quality");
 
-  gtag('config', 'G-FMP9REY96D');
-</script>
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
+let hls = null;
+let dragging = false;
 
- 
-  
-  <body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg"></video>  
-  </div>  
-  
-  <script>  
-    document.addEventListener('DOMContentLoaded', async () => {  
-      shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
-        console.error('Browser not supported');  
-        return;  
-      }  
-  
-      const video = document.querySelector('video');  
-      const player = new shaka.Player();  
-      await player.attach(video);  
-  
-      const container = document.querySelector('.shaka-video-container');  
-      const ui = new shaka.ui.Overlay(player, container, video);  
-  
-      ui.configure({  
-        controlPanelElements: [  
-          'play_pause', 'time_and_duration', 'mute', 'volume',  
-          'spacer', 'language', 'captions', 'picture_in_picture',  
-          'quality', 'fullscreen'  
-        ],  
-        volumeBarColors: {  
-  base: 'rgba(0, 136, 255, 0.3)',  
-  level: 'rgb(0, 136, 255)'  
-},  
-seekBarColors: {
-  base: 'rgba(90, 0, 0, 0.3)',
-  buffered: 'rgba(120, 0, 0, 0.6)',
-  played: 'rgb(170, 0, 0)'
+/*
+ * The six signed URLs supplied earlier are expired.
+ * Replace these entries with fresh URLs from an authorized source.
+ */
+const streams = [
+  {label:"1080p", url:"https://in-mc-flive.fancode.com/mumbai/4249214_hindi_hls_58428cc2d396091_1ta-di_h264/1080p.m3u8?hdntl=EXPIRED_TOKEN"},
+  {label:"720p",  url:"https://in-mc-flive.fancode.com/mumbai/4249214_hindi_hls_58428cc2d396091_1ta-di_h264/720p.m3u8?hdntl=EXPIRED_TOKEN"},
+  {label:"540p",  url:"https://in-mc-flive.fancode.com/mumbai/4249214_hindi_hls_58428cc2d396091_1ta-di_h264/540p.m3u8?hdntl=EXPIRED_TOKEN"},
+  {label:"480p",  url:"https://in-mc-flive.fancode.com/mumbai/4249214_hindi_hls_58428cc2d396091_1ta-di_h264/480p.m3u8?hdntl=EXPIRED_TOKEN"},
+  {label:"360p",  url:"https://in-mc-flive.fancode.com/mumbai/4249214_hindi_hls_58428cc2d396091_1ta-di_h264/360p.m3u8?hdntl=EXPIRED_TOKEN"},
+  {label:"240p",  url:"https://in-mc-flive.fancode.com/mumbai/4249214_hindi_hls_58428cc2d396091_1ta-di_h264/240p.m3u8?hdntl=EXPIRED_TOKEN"}
+];
+
+function status(text, error=false){
+  statusEl.textContent=text;
+  statusEl.classList.toggle("error",error);
 }
-      });  
-  
-   
-      let drmConfig = {  
-        clearKeys: {  
-          "bdc52b31dcf25b0515a61fb9d0f444a2":
- "468ae45daef1021713e7ea869a340f96"  
-        }  
-      };  
-  
-      let streamUrl = "https://a96aivottlinear-a.akamaihd.net/OTTB/pdx-nitro/live/clients/dash/enc/mdzi0aespt/out/v1/ebc753f4d4af40e481e5506bad35eb42/cenc.mpd";  
-  
-      player.configure({  
-        drm: drmConfig,  
-        streaming: {  
-          lowLatencyMode: true,  
-          bufferingGoal: 15,  
-          rebufferingGoal: 2,  
-          bufferBehind: 15,  
-          retryParameters: {  
-            timeout: 10000,  
-            maxAttempts: 5,  
-            baseDelay: 300,  
-            backoffFactor: 1.2  
-          },  
-          segmentRequestTimeout: 8000,  
-          segmentPrefetchLimit: 2,  
-          useNativeHlsOnSafari: true  
-        },  
-        manifest: {  
-          retryParameters: {  
-            timeout: 8000,  
-            maxAttempts: 3  
-          }  
-        }  
-      });  
-  
-      player.addEventListener('error', (event) => {  
-        console.error('Shaka Player Error:', event.detail);  
-      });  
-  
-      try {  
-        await player.load(streamUrl);  
-        console.log("Stream loaded successfully");  
-      } catch (error) {  
-        console.error('Load error:', error);  
-      }  
-    });  
-  </script>  
-  </body>  
-<script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+function show(text){
+  message.textContent=text;
+  overlay.classList.remove("hide");
+}
+function hide(){
+  overlay.classList.add("hide");
+}
+function fmt(seconds){
+  if(!Number.isFinite(seconds)||seconds<0)return "00:00";
+  const h=Math.floor(seconds/3600);
+  const m=Math.floor(seconds%3600/60);
+  const s=Math.floor(seconds%60);
+  return h
+    ? `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+    : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function initPlayer(){
+  // These placeholders cannot play until replaced by fresh, valid URLs.
+  status("The supplied signed links have expired. Replace them with fresh authorized URLs.",true);
+  show("Stream links expired. Fresh authorized URLs are required.");
+  qualitySelect.innerHTML = '<option value="-1">Auto Quality</option>';
+
+  streams.forEach((stream,index)=>{
+    const opt=document.createElement("option");
+    opt.value=index;
+    opt.textContent=stream.label;
+    qualitySelect.appendChild(opt);
+  });
+}
+
+function loadStream(url){
+  if(!url || url.includes("EXPIRED_TOKEN")){
+    status("Cannot play: replace the expired token with a fresh authorized URL.",true);
+    show("Fresh valid stream URL required.");
+    return;
+  }
+
+  if(hls){hls.destroy();hls=null;}
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+  show("Loading stream...");
+  status("Connecting...");
+
+  if(window.Hls && Hls.isSupported()){
+    hls=new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED,(_,data)=>{
+      qualitySelect.innerHTML='<option value="-1">Auto Quality</option>';
+      data.levels.forEach((level,index)=>{
+        const opt=document.createElement("option");
+        opt.value=index;
+        opt.textContent=(level.height||"Unknown")+"p";
+        qualitySelect.appendChild(opt);
+      });
+      status("Stream ready. Press Play.");
+    });
+
+    hls.on(Hls.Events.ERROR,(_,data)=>{
+      if(!data.fatal)return;
+      status("Playback error: stream may be expired, blocked, or unavailable.",true);
+      show("Unable to play stream. Check URL and access permissions.");
+    });
+  }else if(video.canPlayType("application/vnd.apple.mpegurl")){
+    video.src=url;
+    video.addEventListener("loadedmetadata",()=>status("Stream ready."),{once:true});
+    video.addEventListener("error",()=>{
+      status("HLS playback failed. Check the URL and access permissions.",true);
+    },{once:true});
+  }else{
+    status("This browser does not support HLS playback.",true);
+  }
+}
+
+document.getElementById("play").addEventListener("click",async()=>{
+  if(video.paused){
+    try{await video.play();}
+    catch{status("Playback failed. A valid stream URL is required.",true);}
+  }else video.pause();
+});
+
+video.addEventListener("play",()=>{
+  document.getElementById("play").textContent="❚❚ Pause";
+  hide();
+});
+video.addEventListener("pause",()=>{
+  document.getElementById("play").textContent="▶ Play";
+});
+video.addEventListener("waiting",()=>show("Buffering..."));
+video.addEventListener("playing",()=>{
+  hide();
+  status("Playing");
+});
+
+qualitySelect.addEventListener("change",()=>{
+  if(!hls)return;
+  hls.currentLevel=Number(qualitySelect.value);
+});
+
+document.getElementById("volume").addEventListener("input",e=>{
+  video.volume=Number(e.target.value);
+  video.muted=video.volume===0;
+  document.getElementById("mute").textContent=video.muted?"Unmute":"Mute";
+});
+
+document.getElementById("mute").addEventListener("click",()=>{
+  video.muted=!video.muted;
+  document.getElementById("mute").textContent=video.muted?"Unmute":"Mute";
+});
+
+document.getElementById("fullscreen").addEventListener("click",async()=>{
+  const box=document.getElementById("videoBox");
+  try{
+    if(document.fullscreenElement) await document.exitFullscreen();
+    else await box.requestFullscreen();
+  }catch{
+    status("Fullscreen is unavailable in this browser.",true);
+  }
+});
+
+const seek=document.getElementById("seek");
+seek.addEventListener("input",()=>dragging=true);
+seek.addEventListener("change",()=>{
+  if(Number.isFinite(video.duration)&&video.duration>0){
+    video.currentTime=(Number(seek.value)/1000)*video.duration;
+  }
+  dragging=false;
+});
+
+video.addEventListener("timeupdate",()=>{
+  document.getElementById("current").textContent=fmt(video.currentTime);
+  if(Number.isFinite(video.duration)&&video.duration>0){
+    document.getElementById("duration").textContent=fmt(video.duration);
+    if(!dragging)seek.value=String(video.currentTime/video.duration*1000);
+  }else{
+    document.getElementById("duration").textContent="LIVE";
+  }
+});
+
+initPlayer();
+</script>
+</body>
 </html>
+```
