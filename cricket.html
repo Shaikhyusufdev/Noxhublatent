@@ -1,0 +1,159 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOX DASH Player</title>
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .shaka-video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    #status {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      z-index: 5;
+      padding: 12px;
+      border-radius: 8px;
+      background: #222;
+      color: #fff;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    #status:empty {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shaka-video-container" data-shaka-player-container>
+    <video id="video"
+           data-shaka-player
+           playsinline
+           preload="metadata"></video>
+
+    <div id="status">Initializing player...</div>
+  </div>
+
+  <script>
+    const STREAM_URL =
+      "https://a96aivottlinear-a.akamaihd.net/OTTB/iad-nitro/live/clients/dash/enc/ob4a17ydoa/out/v1/f131774c5d354a6590cfd133a1c25338/cenc.mpd";
+
+    async function initPlayer() {
+      const status = document.getElementById("status");
+
+      try {
+        shaka.polyfill.installAll();
+
+        if (!shaka.Player.isBrowserSupported()) {
+          throw new Error("This browser is not supported.");
+        }
+
+        const video = document.getElementById("video");
+        const ui = video.ui;
+
+        if (!ui) {
+          throw new Error("Shaka Player UI failed to initialize.");
+        }
+
+        const player = ui.getControls().getPlayer();
+
+        ui.configure({
+          controlPanelElements: [
+            "play_pause",
+            "time_and_duration",
+            "mute",
+            "volume",
+            "spacer",
+            "language",
+            "captions",
+            "quality",
+            "picture_in_picture",
+            "fullscreen"
+          ],
+          seekBarColors: {
+            base: "rgba(255,255,255,0.25)",
+            buffered: "rgba(0,136,255,0.55)",
+            played: "#e50914"
+          }
+        });
+
+        player.addEventListener("error", event => {
+          const error = event.detail;
+
+          console.error("Shaka error details:", error);
+
+          status.textContent =
+            `Playback error: code ${error.code}. Check Console.`;
+        });
+
+        video.addEventListener("playing", () => {
+          status.textContent = "";
+        });
+
+        video.addEventListener("waiting", () => {
+          status.textContent = "Buffering...";
+        });
+
+        status.textContent = "Loading DASH manifest...";
+
+        await player.load(STREAM_URL);
+
+        status.textContent =
+          "Manifest loaded. Press Play to test playback.";
+
+        console.log("Manifest loaded successfully.");
+
+      } catch (error) {
+        console.error("Player error:", error);
+
+        status.textContent =
+          "Playback failed. Open DevTools Console for details.";
+      }
+    }
+
+    document.addEventListener("shaka-ui-loaded", initPlayer);
+
+    document.addEventListener("shaka-ui-load-failed", () => {
+      document.getElementById("status").textContent =
+        "Shaka UI failed to load. Check your internet connection.";
+    });
+  </script>
+</body>
+</html>
+```
