@@ -53,6 +53,12 @@ a{text-decoration:none;color:inherit}
 @keyframes ytWiggle{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-12deg) scale(1.1)}84%{transform:rotate(10deg) scale(1.1)}92%{transform:rotate(-5deg)}}
 @keyframes ytTag{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.08)}}
 
+/* ===== NOX MUSIC ===== */
+.btn-mx{border-color:rgba(236,72,153,.55);background:linear-gradient(135deg,rgba(236,72,153,.30),rgba(124,58,237,.12));animation:mxPulse 2.4s infinite}
+.btn-mx .mx-ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:13px;color:#fff;background:linear-gradient(135deg,#ec4899,#7c3aed);animation:ytWiggle 3.2s ease-in-out infinite}
+.btn-mx .yt-new{background:linear-gradient(135deg,#7c3aed,#ec4899);box-shadow:0 4px 12px rgba(168,85,247,.5)}
+@keyframes mxPulse{0%{box-shadow:0 0 0 0 rgba(236,72,153,.45),0 10px 30px rgba(0,0,0,.4)}70%{box-shadow:0 0 0 18px rgba(236,72,153,0),0 10px 30px rgba(0,0,0,.4)}100%{box-shadow:0 0 0 0 rgba(236,72,153,0),0 10px 30px rgba(0,0,0,.4)}}
+
 .feature-showcase{margin-bottom:85px}
 .feature-showcase h2{font-size:32px;font-weight:800;margin-bottom:10px;letter-spacing:-.6px}
 .feature-showcase p{color:var(--text-muted);font-size:15px;margin-bottom:24px}
@@ -130,8 +136,11 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
 .end-card p{font-size:13.5px;color:var(--text-muted);margin-top:2px}
 .end-go{margin-left:auto;flex:none;width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center;animation:ytSlide 1.6s ease-in-out infinite}
 @keyframes ytSlide{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+.end-card.mx{background:linear-gradient(135deg,rgba(236,72,153,.22),rgba(124,58,237,.10));border-color:rgba(236,72,153,.45)}
+.end-card.mx .mx-badge{width:58px;height:58px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:26px;color:#fff;background:linear-gradient(135deg,#ec4899,#7c3aed)}
 @media (prefers-reduced-motion:reduce){.end-card::after,.end-go{animation:none!important}.pt,.pt img{transition:none}}
 @media (prefers-reduced-motion:reduce){.btn-yt,.btn-yt *,.dl-yt,.dl-yt::after{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.btn-mx,.btn-mx .mx-ico{animation:none!important}}
 </style>
 </head>
 <body>
@@ -156,6 +165,13 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
         <span class="yt-new">NEW</span>
         <img class="yt-logo" src="https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/20261123-ab1f8ba79cfd.png" alt="" />
         <span>Download YT NOX</span>
+        <i class="fa-solid fa-arrow-down yt-arrow"></i>
+      </button>
+      <button class="btn-glass-secondary btn-yt btn-mx" onclick="goPage(event,'Noxmusic.html')">
+        <span class="shine"></span>
+        <span class="yt-new">NEW</span>
+        <span class="mx-ico"><i class="fa-solid fa-music"></i></span>
+        <span>Download NOX Music</span>
         <i class="fa-solid fa-arrow-down yt-arrow"></i>
       </button>
     </div>
@@ -252,6 +268,14 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
       <span class="end-go"><i class="fa-solid fa-arrow-right"></i></span>
     </a>
   </section>
+
+  <section id="mxgo" class="end-banner fade-in">
+    <a class="end-card mx" href="Noxmusic.html" onclick="return goPage(event,'Noxmusic.html')">
+      <div class="mx-badge"><i class="fa-solid fa-music"></i></div>
+      <div><h3>NOX Music</h3><p>Our music app. Songs, playlists &amp; more. Open the page.</p></div>
+      <span class="end-go"><i class="fa-solid fa-arrow-right"></i></span>
+    </a>
+  </section>
 </main>
 
 <footer>
@@ -262,7 +286,7 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
     </div>
     <div class="footer-nav">
       <div class="footer-col"><h4>Product</h4><ul>
-        <li><a href="#download">Download</a></li><li><a href="ytnox.html">YTNOX</a></li><li><a href="#features">Features</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+        <li><a href="#download">Download</a></li><li><a href="ytnox.html">YTNOX</a></li><li><a href="Noxmusic.html">NOX Music</a></li><li><a href="#features">Features</a></li><li><a href="#faq">FAQ</a></li></ul></div>
       <div class="footer-col"><h4>Legal</h4><ul>
         <li><a href="https://nox4clip.in/policy/privacy-policy.html">Privacy Policy</a></li>
         <li><a href="https://www.nox4clip.in/policy/privacy-policy.html#users">Terms of Service</a></li>
@@ -308,15 +332,18 @@ function scrollToSection(id) {
   if (el) el.scrollIntoView({ behavior: "smooth" });
 }
 
-// Go to the YTNOX page with a smooth transition
-function goYT(e) {
+// Go to any page with a smooth transition
+function goPage(e, url) {
   if (e && e.preventDefault) e.preventDefault();
   var o = document.getElementById("pt");
-  if (!o) { location.href = "ytnox.html"; return false; }
+  if (!o) { location.href = url; return false; }
   o.classList.add("go");
-  setTimeout(function () { location.href = "ytnox.html"; }, 550);
+  setTimeout(function () { location.href = url; }, 550);
   return false;
 }
+// YTNOX page
+function goYT(e) { return goPage(e, "ytnox.html"); }
+
 window.addEventListener("pageshow", function () {
   var o = document.getElementById("pt"); if (o) o.classList.remove("go");
 });
