@@ -419,7 +419,7 @@ footer{padding:26px var(--pad) 36px;display:flex;justify-content:space-between;c
 
   function ripple(el,e){var r=el.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement('span');d.className='rip';
     d.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(e.clientX-r.left-s/2)+'px;top:'+(e.clientY-r.top-s/2)+'px';el.appendChild(d);setTimeout(function(){d.remove()},700)}
-  var MUSIC_APK="";/* <-- NOX MUSIC APK ka seedha link yahan daalo */
+  var MUSIC_APK="https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/noxmusic.apk";/* <-- NOX MUSIC APK ka seedha link yahan daalo */
   $$('.dl').forEach(function(b){if(MUSIC_APK){b.href=MUSIC_APK;b.setAttribute('download','NoxMusic.apk')}});
   $$('.dl').forEach(function(b){b.addEventListener('click',function(e){
     if(!MUSIC_APK){e.preventDefault();ripple(b,e);$('#note').textContent='APK link coming soon.';return}
