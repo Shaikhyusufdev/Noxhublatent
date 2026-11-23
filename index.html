@@ -33,6 +33,26 @@ a{text-decoration:none;color:inherit}
 .btn-glass-primary{background:#fff;color:#000;padding:15px;border-radius:9999px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:all .25s}
 .btn-glass-secondary{background:rgba(255,255,255,.08);color:#fff;backdrop-filter:blur(12px);padding:15px;border-radius:9999px;font-weight:700;font-size:15px;border:1px solid var(--glass-border);cursor:pointer;transition:all .25s}
 .btn-glass-primary:hover,.btn-glass-secondary:hover{transform:translateY(-2px)}
+
+/* ===== YTNOX hero button (animated) ===== */
+.btn-yt{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;overflow:visible;isolation:isolate;
+  background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.35);
+  box-shadow:0 0 0 0 rgba(255,255,255,.35),0 10px 30px rgba(0,0,0,.4);
+  animation:ytPulse 2.4s infinite;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn-yt .shine{position:absolute;inset:0;border-radius:inherit;overflow:hidden;z-index:-1}
+.btn-yt .shine::before{content:"";position:absolute;top:0;bottom:0;width:45%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:ytShine 3.2s infinite}
+.btn-yt .yt-logo{width:26px;height:26px;border-radius:8px;object-fit:cover;animation:ytWiggle 3.2s ease-in-out infinite}
+.btn-yt .yt-arrow{font-size:14px;animation:ytBounce 1.3s ease-in-out infinite}
+.btn-yt .yt-new{position:absolute;top:-9px;right:16px;background:linear-gradient(135deg,#ff4d6d,#ff8a3d);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:9999px;box-shadow:0 4px 12px rgba(255,77,109,.5);animation:ytTag 1.6s ease-in-out infinite}
+.btn-yt:hover{transform:translateY(-3px) scale(1.02);border-color:#fff}
+.btn-yt:active{transform:scale(.96)}
+@keyframes ytPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.4),0 10px 30px rgba(0,0,0,.4)}70%{box-shadow:0 0 0 18px rgba(255,255,255,0),0 10px 30px rgba(0,0,0,.4)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0),0 10px 30px rgba(0,0,0,.4)}}
+@keyframes ytShine{0%,55%{left:-60%}100%{left:130%}}
+@keyframes ytBounce{0%,100%{transform:translateY(-2px)}50%{transform:translateY(5px)}}
+@keyframes ytWiggle{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-12deg) scale(1.1)}84%{transform:rotate(10deg) scale(1.1)}92%{transform:rotate(-5deg)}}
+@keyframes ytTag{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.08)}}
+
 .feature-showcase{margin-bottom:85px}
 .feature-showcase h2{font-size:32px;font-weight:800;margin-bottom:10px;letter-spacing:-.6px}
 .feature-showcase p{color:var(--text-muted);font-size:15px;margin-bottom:24px}
@@ -55,12 +75,21 @@ a{text-decoration:none;color:inherit}
 .dl-tv{background:linear-gradient(135deg,rgba(249,115,22,.45),rgba(234,88,12,.25)),var(--glass-bg);backdrop-filter:blur(24px);border:1px solid rgba(249,115,22,.35);box-shadow:0 10px 35px rgba(249,115,22,.25)}
 .badge-popular{background:rgba(255,255,255,.2);padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:700;width:fit-content;text-transform:uppercase;border:1px solid rgba(255,255,255,.2)}
 .dl-header{display:flex;align-items:center;gap:16px}
-.dl-icon-box{width:52px;height:52px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.dl-icon-box{width:52px;height:52px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
+.dl-icon-box img{width:100%;height:100%;object-fit:cover}
 .dl-title-group h3{font-size:21px;font-weight:800}
 .dl-title-group span{font-size:13px;color:#e2e8f0}
 .dl-card p{font-size:14px;color:#f1f5f9}
 .dl-btn{background:#fff;color:#000;width:100%;padding:15px;border-radius:9999px;font-size:15px;font-weight:700;text-align:center;transition:all .25s;box-shadow:0 4px 15px rgba(0,0,0,.3);display:block}
 .dl-btn:hover{transform:translateY(-2px)}
+
+/* ===== YTNOX download card ===== */
+.dl-yt{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(140,150,175,.10)),var(--glass-bg);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.3);box-shadow:0 10px 35px rgba(150,165,210,.18)}
+.dl-yt::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);animation:ytShine 5s infinite;pointer-events:none}
+.dl-yt.flash{animation:ytFlash 1.6s ease-out 1}
+@keyframes ytFlash{0%{box-shadow:0 0 0 0 rgba(255,255,255,.7)}60%{box-shadow:0 0 0 26px rgba(255,255,255,0)}100%{box-shadow:0 10px 35px rgba(150,165,210,.18)}}
+.dl-yt .dl-icon-box{background:#000}
+
 .faq-section{margin-bottom:85px}
 .faq-header{text-align:center;margin-bottom:30px}
 .faq-header h2{font-size:34px;font-weight:800;margin-bottom:8px}
@@ -85,9 +114,28 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
 .fade-in.visible{opacity:1;transform:none}
 .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(24,24,32,.85);backdrop-filter:blur(20px);color:#fff;border:1px solid var(--glass-border);padding:14px 26px;border-radius:9999px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:all .3s;display:flex;align-items:center;gap:10px}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ===== page transition + end banner ===== */
+.pt{position:fixed;inset:0;z-index:10000;background:#0c0d10;display:grid;place-items:center;opacity:0;pointer-events:none;clip-path:circle(0% at 50% 60%);transition:clip-path .55s cubic-bezier(.7,0,.2,1),opacity .2s}
+.pt.go{opacity:1;pointer-events:all;clip-path:circle(150% at 50% 60%)}
+.pt img{width:84px;height:84px;border-radius:22px;transform:scale(.6);opacity:0;transition:transform .5s .2s,opacity .4s .2s}
+.pt.go img{transform:scale(1);opacity:1}
+.end-banner{margin-bottom:70px}
+.end-card{display:flex;align-items:center;gap:16px;padding:22px 22px;border-radius:26px;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(140,150,175,.08));border:1px solid rgba(255,255,255,.3);position:relative;overflow:hidden;transition:transform .25s,border-color .25s;-webkit-tap-highlight-color:transparent}
+.end-card::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);transform:skewX(-20deg);animation:ytShine 4.5s infinite}
+.end-card:hover{transform:translateY(-3px);border-color:#fff}
+.end-card:active{transform:scale(.98)}
+.end-card img{width:58px;height:58px;border-radius:16px;flex:none;object-fit:cover}
+.end-card h3{font-size:20px;font-weight:800;line-height:1.2}
+.end-card p{font-size:13.5px;color:var(--text-muted);margin-top:2px}
+.end-go{margin-left:auto;flex:none;width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center;animation:ytSlide 1.6s ease-in-out infinite}
+@keyframes ytSlide{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.end-card::after,.end-go{animation:none!important}.pt,.pt img{transition:none}}
+@media (prefers-reduced-motion:reduce){.btn-yt,.btn-yt *,.dl-yt,.dl-yt::after{animation:none!important}}
 </style>
 </head>
 <body>
+<div class="pt" id="pt" aria-hidden="true"><img src="https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/20261123-ab1f8ba79cfd.png" alt="" /></div>
 <div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 
 <div id="toast" class="toast"><i class="fa-solid fa-circle-down" style="color:#4ade80"></i><span id="toast-msg">Starting download...</span></div>
@@ -103,7 +151,13 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
     <p class="hero-desc">DOWNLOAD APP OR VISIT OUR WEBSITE TO START WATCHING.</p>
     <div class="hero-actions">
       <button class="btn-glass-primary" onclick="scrollToSection('download')">Download APK</button>
-      <button class="btn-glass-secondary" onclick="window.open('https://apknox.online/ptest/calude/')">WATCH ON WEBSITE</button>
+      <button class="btn-glass-secondary btn-yt" onclick="goYT(event)">
+        <span class="shine"></span>
+        <span class="yt-new">NEW</span>
+        <img class="yt-logo" src="https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/20261123-ab1f8ba79cfd.png" alt="" />
+        <span>Download YT NOX</span>
+        <i class="fa-solid fa-arrow-down yt-arrow"></i>
+      </button>
     </div>
   </section>
 
@@ -155,6 +209,22 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
     </div>
   </section>
 
+  <section id="ytnox" class="download-section fade-in">
+    <h2>Get YTNOX</h2>
+    <p class="subtext">Our new video app for Android.</p>
+    <div class="download-cards">
+      <div class="dl-card dl-yt" id="yt-card">
+        <div class="badge-popular">NEW APP</div>
+        <div class="dl-header">
+          <div class="dl-icon-box"><img src="https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/20261123-ab1f8ba79cfd.png" alt="YTNOX" /></div>
+          <div class="dl-title-group"><h3>YTNOX</h3><span>Videos, Shorts &amp; Live</span></div>
+        </div>
+        <p>A fast video player for Android with Shorts, Live streams, a quality picker and audio track switching.</p>
+        <a id="dl-yt" href="#" class="dl-btn">Download YTNOX</a>
+      </div>
+    </div>
+  </section>
+
   <section id="faq" class="faq-section fade-in">
     <div class="faq-header"><h2>FAQ</h2><p>Everything you need to know about NoxFilx.</p></div>
     <div class="faq-list">
@@ -174,6 +244,14 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
         <div class="faq-answer">Download the APK from the buttons above, open your Downloads folder, tap the file, and allow 'Install Unknown Apps' in Android Settings if prompted.</div></div>
     </div>
   </section>
+
+  <section id="ytgo" class="end-banner fade-in">
+    <a class="end-card" href="ytnox.html" onclick="return goYT(event)">
+      <img src="https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/20261123-ab1f8ba79cfd.png" alt="YTNOX" />
+      <div><h3>YTNOX</h3><p>Our new video app. Videos, Shorts &amp; Live. Open the page.</p></div>
+      <span class="end-go"><i class="fa-solid fa-arrow-right"></i></span>
+    </a>
+  </section>
 </main>
 
 <footer>
@@ -184,7 +262,7 @@ footer{border-top:1px solid var(--glass-border);padding:50px 0 30px;background:r
     </div>
     <div class="footer-nav">
       <div class="footer-col"><h4>Product</h4><ul>
-        <li><a href="#download">Download</a></li><li><a href="#features">Features</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+        <li><a href="#download">Download</a></li><li><a href="ytnox.html">YTNOX</a></li><li><a href="#features">Features</a></li><li><a href="#faq">FAQ</a></li></ul></div>
       <div class="footer-col"><h4>Legal</h4><ul>
         <li><a href="https://nox4clip.in/policy/privacy-policy.html">Privacy Policy</a></li>
         <li><a href="https://www.nox4clip.in/policy/privacy-policy.html#users">Terms of Service</a></li>
@@ -207,6 +285,7 @@ var CONFIG = {
   mobileVersion: "Version 3.4",
   tvApk: "https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/NoxTv-1.0.apk",
   tvVersion: "Version 1.0",
+  ytApk: "https://s3-noi.aces3.ai/noxhub/NOXFLIXLOGO/YTNOX.apk",
   telegram: "https://t.me/YOUR_CHANNEL"
 };
 // ====================================================
@@ -219,6 +298,7 @@ function setup(id, url, name, msg) {
 }
 setup("dl-mobile", CONFIG.mobileApk, "NoxFlix.apk", "Starting NoxFilx Mobile APK download...");
 setup("dl-tv", CONFIG.tvApk, "NoxTV.apk", "Starting NoxFilx TV APK download...");
+setup("dl-yt", CONFIG.ytApk, "YTNOX.apk", "Starting YTNOX APK download...");
 document.getElementById("mobile-ver").textContent = CONFIG.mobileVersion;
 document.getElementById("tv-ver").textContent = CONFIG.tvVersion;
 document.getElementById("tg-link").href = CONFIG.telegram;
@@ -227,6 +307,19 @@ function scrollToSection(id) {
   var el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: "smooth" });
 }
+
+// Go to the YTNOX page with a smooth transition
+function goYT(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  var o = document.getElementById("pt");
+  if (!o) { location.href = "ytnox.html"; return false; }
+  o.classList.add("go");
+  setTimeout(function () { location.href = "ytnox.html"; }, 550);
+  return false;
+}
+window.addEventListener("pageshow", function () {
+  var o = document.getElementById("pt"); if (o) o.classList.remove("go");
+});
 
 document.querySelectorAll(".faq-question").forEach(function (btn) {
   btn.addEventListener("click", function () {
